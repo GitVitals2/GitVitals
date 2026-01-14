@@ -53,10 +53,6 @@ Then update the `.env` file with your actual values:
 # Database
 DATABASE_URL="postgresql://username:password@localhost:5432/gitvitals"
 
-# NextAuth.js (for future authentication)
-NEXTAUTH_SECRET="your-secret-here"
-NEXTAUTH_URL="http://localhost:3000"
-
 # Canvas LMS Integration (optional)
 CANVAS_API_KEY=""
 CANVAS_API_URL=""
@@ -117,7 +113,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser to see the a
 The application uses the following main models:
 
 ### User
-Core user model for authentication (students and instructors)
+Core user model for students and instructors
 
 ### Student
 Extended profile for students with cohort information
@@ -165,14 +161,11 @@ Vercel will automatically:
 
 Make sure to set these in your Vercel dashboard:
 - `DATABASE_URL` - Your production PostgreSQL connection string
-- `NEXTAUTH_SECRET` - A secure random string for NextAuth.js
-- `NEXTAUTH_URL` - Your production URL
 - `CANVAS_API_KEY` - Canvas LMS API key (if using)
 - `CANVAS_API_URL` - Canvas LMS API URL (if using)
 
 ## 🎓 Key Features (Planned)
 
-- [ ] User authentication with role-based access (Student/Instructor)
 - [ ] Student: Submit vitals for 25 classmates
 - [ ] Student: Submit vitals for 25 family members
 - [ ] Student: View submission history and grades
