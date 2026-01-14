@@ -1,0 +1,112 @@
+// GitVitals Prisma Schema
+// Medical vitals tracking system for students and instructors
+// Note: Prisma 7 uses prisma.config.ts for datasource URL configuration
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  // Database URL is configured in prisma.config.ts (Prisma 7+ pattern)
+}
+
+// Enums
+enum UserRole {
+  STUDENT
+  INSTRUCTOR
+}
+
+enum Relationship {
+  CLASSMATE
+  FAMILY_MEMBER
+}
+
+// User Model - Base user for authentication and role management
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String
+  role      UserRole
+  canvasId  String?  // Optional Canvas LMS integration
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  student        Student?
+  createdVitals  CorrectVitals[] @relation("InstructorCreatedVitals")
+}
+
+// Student Model - Extended profile for students
+model Student {
+  id        String  @id @default(uuid())
+  userId    String  @unique
+  studentId String  @unique // Student identifier (e.g., student number)
+  cohort    String? // Optional cohort grouping
+
+  // Relations
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  patients       Patient[]
+  vitalReadings  VitalReading[]
+  correctVitals  CorrectVitals[]
+}
+
+// Patient Model - Patients for whom vitals are recorded
+model Patient {
+  id              String       @id @default(uuid())
+  studentId       String
+  name            String
+  relationship    Relationship // CLASSMATE or FAMILY_MEMBER
+  age             Int?
+  gender          String?
+  isBaselineSet   Boolean      @default(false) // For family members baseline tracking
+  createdAt       DateTime     @default(now())
+
+  // Relations
+  student        Student        @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  vitalReadings  VitalReading[]
+}
+
+// VitalReading Model - Individual vital readings submitted by students
+model VitalReading {
+  id                      String    @id @default(uuid())
+  patientId               String
+  studentId               String
+  readingNumber           Int       // 1-50: which vital reading this is
+  bloodPressureSystolic   Int
+  bloodPressureDiastolic  Int
+  heartRate               Int
+  temperature             Decimal   @db.Decimal(4, 1) // e.g., 98.6
+  respiratoryRate         Int
+  oxygenSaturation        Int
+  submittedAt             DateTime  @default(now())
+  gradedAt                DateTime? // When instructor graded this
+  isCorrect               Boolean?  // Grading result
+  instructorNotes         String?   @db.Text
+  createdAt               DateTime  @default(now())
+
+  // Relations
+  patient Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId, readingNumber])
+  @@index([patientId])
+}
+
+// CorrectVitals Model - Correct baseline vitals for classmates (readings 1-25)
+model CorrectVitals {
+  id                      String   @id @default(uuid())
+  studentId               String   @unique // The classmate whose correct vitals these are
+  bloodPressureSystolic   Int
+  bloodPressureDiastolic  Int
+  heartRate               Int
+  temperature             Decimal  @db.Decimal(4, 1)
+  respiratoryRate         Int
+  oxygenSaturation        Int
+  createdById             String   // Instructor who set these
+  createdAt               DateTime @default(now())
+
+  // Relations
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  createdBy User    @relation("InstructorCreatedVitals", fields: [createdById], references: [id])
+}
