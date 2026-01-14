@@ -1,6 +1,6 @@
 /**
  * GitVitals - Home Page
- * Landing page with login options for students and instructors
+ * Landing page for the medical vitals tracking application
  */
 
 export default function Home() {
@@ -24,27 +24,14 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Login Options - Placeholder for future authentication */}
+          {/* Quick Access */}
           <div className="space-y-4">
-            <button
-              className="w-full rounded-lg bg-indigo-600 px-6 py-3 text-white font-medium transition-colors hover:bg-indigo-700"
-              disabled
+            <a
+              href="/dashboard"
+              className="block w-full rounded-lg bg-indigo-600 px-6 py-3 text-white font-medium transition-colors hover:bg-indigo-700"
             >
-              Student Login
-            </button>
-            <button
-              className="w-full rounded-lg border-2 border-indigo-600 px-6 py-3 text-indigo-600 font-medium transition-colors hover:bg-indigo-50"
-              disabled
-            >
-              Instructor Login
-            </button>
-          </div>
-
-          {/* Status Message */}
-          <div className="mt-6">
-            <p className="text-xs text-gray-500">
-              Authentication will be configured in the next phase
-            </p>
+              Go to Dashboard
+            </a>
           </div>
         </div>
       </main>

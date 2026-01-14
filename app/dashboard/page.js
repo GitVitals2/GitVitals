@@ -1,6 +1,6 @@
 /**
  * GitVitals - Dashboard Page
- * Main dashboard for authenticated users (students and instructors)
+ * Main dashboard for students and instructors
  */
 
 export default function Dashboard() {
@@ -22,7 +22,7 @@ export default function Dashboard() {
             Welcome to GitVitals
           </h2>
           <p className="text-gray-600 mb-4">
-            This is the main dashboard where authenticated users will access their features:
+            This is the main dashboard where users will access their features:
           </p>
           <ul className="list-disc list-inside space-y-2 text-gray-600">
             <li>Students: Submit vitals readings for classmates and family members</li>
@@ -30,11 +30,6 @@ export default function Dashboard() {
             <li>Instructors: Review and grade student submissions</li>
             <li>Instructors: Set correct vitals for classmate baselines</li>
           </ul>
-          <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded">
-            <p className="text-sm text-yellow-800">
-              <strong>Note:</strong> Authentication and role-based access will be implemented in the next phase.
-            </p>
-          </div>
         </div>
       </main>
     </div>
