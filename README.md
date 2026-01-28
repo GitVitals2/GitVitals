@@ -205,3 +205,6 @@ For issues and questions:
 ---
 
 Built with ❤️ for medical assisting education
+
+## Docs
+- [Class Diagram](docs/class-diagram.md)

@@ -1,12 +1,13 @@
-# Class Diagram
+# GitVitals – Class Diagram (Mermaid)
 
 ```mermaid
 classDiagram
+direction LR
 
 class Person {
   +int id
   +string name
-  +date dob
+  +Date dob
 }
 
 class Student {
@@ -31,15 +32,16 @@ class StudentReading {
   +boolean isCorrect
   +DateTime gradedAt
   +string instructorNotes
-  +calculateGrade() int
+  +int calculateGrade()
 }
 
 Person <|-- Student
 
 Person "1" --> "0..*" Reading : hasReadings
-Person "1" --> "0..1" Reading : baselineReading
+Person "0..1" --> "1" Reading : baselineReading
+Person "0..*" -- "0..*" Person : friendsWith
 
 Student "1" --> "0..*" StudentReading : submits
 Reading "1" --> "0..*" StudentReading : evaluatedIn
 
-Person "0..*" --> "0..*" Person : friendsWith
+```
