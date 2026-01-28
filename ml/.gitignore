@@ -1,0 +1,23 @@
+# Python virtual env (never commit)
+.venv/
+
+# Python caches
+__pycache__/
+*.py[cod]
+
+# Tool caches
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+
+# OS noise
+.DS_Store
+
+# Model artifacts (don’t commit trained binaries)
+*.joblib
+*.pkl
+models/
+artifacts/
+
+# Logs
+*.log
