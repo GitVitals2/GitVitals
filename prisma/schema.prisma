@@ -22,6 +22,13 @@ enum Relationship {
   FAMILY_MEMBER
 }
 
+enum ReviewStatus {
+  PENDING
+  AUTO_PASS
+  AUTO_FLAG
+  REVIEWED
+}
+
 // User Model - Base user for authentication and role management
 model User {
   id        String   @id @default(uuid())
@@ -45,10 +52,13 @@ model Student {
   cohort    String? // Optional cohort grouping
 
   // Relations
-  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  patients       Patient[]
-  vitalReadings  VitalReading[]
-  correctVitals  CorrectVitals[]
+  user             User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  patients         Patient[]
+  vitalReadings    VitalReading[]
+  correctVitals    CorrectVitals[]
+
+  // NEW: other students can link you as a classmate-patient
+  asClassmatePatient Patient[] @relation("ClassmateLink")
 }
 
 // Patient Model - Patients for whom vitals are recorded
@@ -62,9 +72,16 @@ model Patient {
   isBaselineSet   Boolean      @default(false) // For family members baseline tracking
   createdAt       DateTime     @default(now())
 
+  // NEW: when relationship = CLASSMATE, point to the real Student record
+  classmateStudentId String?
+  classmateStudent   Student?  @relation("ClassmateLink", fields: [classmateStudentId], references: [id], onDelete: SetNull)
+
   // Relations
   student        Student        @relation(fields: [studentId], references: [id], onDelete: Cascade)
   vitalReadings  VitalReading[]
+
+  @@index([studentId])
+  @@index([classmateStudentId])
 }
 
 // VitalReading Model - Individual vital readings submitted by students
@@ -73,15 +90,41 @@ model VitalReading {
   patientId               String
   studentId               String
   readingNumber           Int       // 1-50: which vital reading this is
+
   bloodPressureSystolic   Int
   bloodPressureDiastolic  Int
   heartRate               Int
-  temperature             Decimal   @db.Decimal(4, 1) // e.g., 98.6
+  temperature             Decimal   @db.Decimal(4, 1) // Fahrenheit, e.g., 98.6
   respiratoryRate         Int
   oxygenSaturation        Int
+
+  // NEW: US units body measurements
+  heightFt                Int?
+  heightIn                Decimal?  @db.Decimal(4, 1)
+  weightLb                Decimal?  @db.Decimal(6, 1)
+
+  // NEW: infant-only measurements (US units)
+  lengthIn                Decimal?  @db.Decimal(5, 1)
+  headCircumferenceIn     Decimal?  @db.Decimal(5, 1)
+
+  // NEW: pain scale
+  pain0to10               Int?
+
+  // ---- ML outputs (stored per reading) ----
+  mlPFlag                 Float?
+  mlPredFlag              Boolean?
+  mlThreshold             Float?
+  mlReasons               Json?
+  mlModelVersion          String?
+  mlScoredAt              DateTime?
+
+  // ---- Instructor review / labels ----
+  reviewStatus            ReviewStatus @default(PENDING)
+  instructorLabel         Boolean?     // 1 = needs recheck, 0 = ok (training label)
+
   submittedAt             DateTime  @default(now())
   gradedAt                DateTime? // When instructor graded this
-  isCorrect               Boolean?  // Grading result
+  isCorrect               Boolean?  // Grading result (legacy / optional)
   instructorNotes         String?   @db.Text
   createdAt               DateTime  @default(now())
 
@@ -91,6 +134,7 @@ model VitalReading {
 
   @@index([studentId, readingNumber])
   @@index([patientId])
+  @@index([reviewStatus])
 }
 
 // CorrectVitals Model - Correct baseline vitals for classmates (readings 1-25)
