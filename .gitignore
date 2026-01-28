@@ -46,5 +46,30 @@ next-env.d.ts
 
 /app/generated/prisma
 
-# documentation
-ARCHITECTURE.md
+# Python virtual envs
+.venv/
+venv/
+env/
+ml/.venv/
+
+# Python cache / compiled
+__pycache__/
+*.py[cod]
+*.so
+*.dylib
+
+# OS
+.DS_Store
+
+# Jupyter (si aplica)
+.ipynb_checkpoints/
+
+# Python virtual envs
+.venv/
+**/.venv/
+ml/.venv/
+
+# Python junk
+__pycache__/
+*.pyc
+.DS_Store
