@@ -264,7 +264,7 @@ export default function InstructorDashboard() {
         <h3 className="font-bold mb-2">📝 Quick Tips:</h3>
         <ul className="text-sm space-y-1">
           <li>• You need to have data in your database to test these endpoints</li>
-          <li>• Student IDs and Submission IDs are UUIDs (e.g., "abc-123-def-456")</li>
+          <li>• Student IDs and Submission IDs are UUIDs (e.g., &quot;abc-123-def-456&quot;)</li>
           <li>• Reading numbers are 1-50</li>
           <li>• Make sure your DATABASE_URL is configured in .env</li>
           <li>• Run migrations first: <code className="bg-gray-200 px-1">npx prisma migrate dev</code></li>

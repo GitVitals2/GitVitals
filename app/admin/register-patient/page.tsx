@@ -1,33 +1,26 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 export default function RegisterPatientPage() {
   const [showModal, setShowModal] = useState(false);
-  const [formData, setFormData] = useState({
-    patientName: '',
-    patientDOB: '',
-    checkDate: '',
-    checkTime: '',
-    height: '',
-    weight: '',
-    shoes: '',
-    pulseOximetry: '',
-    temperature: '',
-    pulse: '',
-    respiration: '',
-    bloodPressure: ''
-  });
-
-  // Define data e hora atual como padrão ao carregar
-  useEffect(() => {
+  const [formData, setFormData] = useState(() => {
     const now = new Date();
-    setFormData(prev => ({
-      ...prev,
+    return {
+      patientName: '',
+      patientDOB: '',
       checkDate: now.toISOString().split('T')[0],
-      checkTime: now.toTimeString().slice(0, 5)
-    }));
-  }, []);
+      checkTime: now.toTimeString().slice(0, 5),
+      height: '',
+      weight: '',
+      shoes: '',
+      pulseOximetry: '',
+      temperature: '',
+      pulse: '',
+      respiration: '',
+      bloodPressure: ''
+    };
+  });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { id, value } = e.target;

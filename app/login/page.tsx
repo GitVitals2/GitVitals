@@ -171,7 +171,7 @@ export default function LoginPage() {
         </button>
 
         <div style={{ textAlign: "center", marginTop: "25px", color: "#666", fontSize: "13px" }}>
-          Don't have an account? <a href="#" style={{ color: "#667eea", fontWeight: 600, textDecoration: "none" }}>Sign Up</a>
+          Don&apos;t have an account? <a href="#" style={{ color: "#667eea", fontWeight: 600, textDecoration: "none" }}>Sign Up</a>
         </div>
       </div>
     </div>
