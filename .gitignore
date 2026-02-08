@@ -1,3 +1,5 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
 # dependencies
 /node_modules
 /.pnp
@@ -18,19 +20,17 @@
 # production
 /build
 
-# misc / OS
+# misc
 .DS_Store
-
-# secrets / keys
 *.pem
 
-# debug logs
+# debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files
+# env files (can opt-in for committing if needed)
 .env
 .env.local
 .env.development.local
@@ -45,21 +45,37 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# prisma generated output (only if truly generated)
-app/generated/prisma
+/app/generated/prisma
 
-# python virtual envs
+# Python virtual envs
 .venv/
 venv/
 env/
-**/.venv/
 ml/.venv/
 
-# python cache / compiled
+# Python cache / compiled
 __pycache__/
 *.py[cod]
 *.so
 *.dylib
 
-# jupyter
+# OS
+.DS_Store
+
+# Jupyter (si aplica)
 .ipynb_checkpoints/
+
+# Python virtual envs
+.venv/
+**/.venv/
+ml/.venv/
+
+# Python junk
+__pycache__/
+*.pyc
+.DS_Store
+
+# ML artifacts
+ml/artifacts/
+ml/data/*
+!ml/data/.gitkeep

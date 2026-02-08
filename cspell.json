@@ -1,0 +1,23 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "words": [
+    "proba",
+    "Supabase",
+    "SUPABASE",
+    "psycopg",
+    "psql",
+    "bp_systolic",
+    "bp_diastolic",
+    "heart_rate",
+    "respiratory_rate",
+    "oxygen_saturation",
+    "pulse_pressure",
+    "at_risk",
+    "ml_training_data",
+    "docker-compose",
+    "venv",
+    "ml",
+    "joblib"
+  ]
+}

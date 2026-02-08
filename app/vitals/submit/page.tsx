@@ -8,6 +8,21 @@ export default function SubmitVitalsPage() {
   const [selectedPatient, setSelectedPatient] = useState<{id: number, name: string} | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [validation, setValidation] = useState<Record<string, string>>({});
+  const [prediction, setPrediction] = useState<{ pred_flag: number; p_flag: number } | null>(null);
+
+  const [formValues, setFormValues] = useState({
+    age_years: '',
+    heart_rate: '',
+    resp_rate: '',
+    temp_f: '',
+    spo2_pct: '',
+    systolic_bp: '',
+    diastolic_bp: '',
+    height_ft: '',
+    height_in: '',
+    weight_lb: '',
+    pain_0_10: '',
+  });
 
   // Mock de pacientes (Isso viria do seu banco via Prisma no futuro)
   const patients = [
@@ -34,25 +49,49 @@ export default function SubmitVitalsPage() {
     setFilteredPatients([]);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedPatient) return alert('Selecione um paciente');
 
-    // Simulação de Validação do Backend
-    const mockValidation = {
-      dob: Math.random() > 0.2 ? 'OK' : 'NOK',
-      height: Math.random() > 0.2 ? 'OK' : 'NOK',
-      weight: Math.random() > 0.2 ? 'OK' : 'NOK',
-      oximetry: Math.random() > 0.2 ? 'OK' : 'NOK',
-      temperature: Math.random() > 0.2 ? 'OK' : 'NOK',
-      bp: Math.random() > 0.2 ? 'OK' : 'NOK',
-    };
-    
-    setValidation(mockValidation);
+    setValidation({});
+    setPrediction(null);
 
-    const allOk = Object.values(mockValidation).every(v => v === 'OK');
-    if (allOk) setShowModal(true);
-    else alert('Alguns sinais estão fora do padrão. Verifique os campos marcados com X.');
+    const payload = {
+      age_years: Number(formValues.age_years),
+      heart_rate: Number(formValues.heart_rate),
+      resp_rate: Number(formValues.resp_rate),
+      temp_f: Number(formValues.temp_f),
+      spo2_pct: Number(formValues.spo2_pct),
+      systolic_bp: Number(formValues.systolic_bp),
+      diastolic_bp: Number(formValues.diastolic_bp),
+      height_ft: Number(formValues.height_ft),
+      height_in: Number(formValues.height_in),
+      weight_lb: Number(formValues.weight_lb),
+      pain_0_10: Number(formValues.pain_0_10),
+    };
+
+    try {
+      const res = await fetch('/api/vitals/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.message || 'Erro ao enviar os dados');
+
+      if (data?.prediction) {
+        setPrediction({ pred_flag: data.prediction.pred_flag, p_flag: data.prediction.p_flag });
+      }
+
+      setShowModal(true);
+    } catch (error: any) {
+      alert(error?.message || 'Erro ao enviar os dados');
+    }
+  };
+
+  const updateField = (key: keyof typeof formValues) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormValues(prev => ({ ...prev, [key]: e.target.value }));
   };
 
   return (
@@ -95,24 +134,50 @@ export default function SubmitVitalsPage() {
           <div style={cardStyle}>
             <h2 style={titleStyle}>Vitals Measurements</h2>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-              <div style={{ position: 'relative' }}>
+              <div>
+                <label style={labelStyle}>Age (years)</label>
+                <input type="number" required style={inputStyle} value={formValues.age_years} onChange={updateField('age_years')} />
+              </div>
+              <div>
+                <label style={labelStyle}>Heart Rate (bpm)</label>
+                <input type="number" required style={inputStyle} value={formValues.heart_rate} onChange={updateField('heart_rate')} />
+              </div>
+              <div>
+                <label style={labelStyle}>Respiratory Rate (rpm)</label>
+                <input type="number" required style={inputStyle} value={formValues.resp_rate} onChange={updateField('resp_rate')} />
+              </div>
+              <div>
                 <label style={labelStyle}>Temperature (°F)</label>
-                <input type="number" step="0.1" required style={inputStyle} />
-                <span style={{ position: 'absolute', right: '10px', top: '35px', color: validation.temperature === 'OK' ? 'green' : 'red' }}>
-                  {validation.temperature === 'OK' ? '✓' : validation.temperature === 'NOK' ? '✗' : ''}
-                </span>
+                <input type="number" step="0.1" required style={inputStyle} value={formValues.temp_f} onChange={updateField('temp_f')} />
               </div>
-              <div style={{ position: 'relative' }}>
+              <div>
                 <label style={labelStyle}>Pulse Oximetry (%)</label>
-                <input type="number" required style={inputStyle} />
-                <span style={{ position: 'absolute', right: '10px', top: '35px', color: validation.oximetry === 'OK' ? 'green' : 'red' }}>
-                  {validation.oximetry === 'OK' ? '✓' : validation.oximetry === 'NOK' ? '✗' : ''}
-                </span>
+                <input type="number" required style={inputStyle} value={formValues.spo2_pct} onChange={updateField('spo2_pct')} />
               </div>
-            </div>
-            <div style={{ marginTop: '20px', position: 'relative' }}>
-              <label style={labelStyle}>Blood Pressure (mmHg)</label>
-              <input type="text" placeholder="120/80" required style={inputStyle} />
+              <div>
+                <label style={labelStyle}>Pain (0-10)</label>
+                <input type="number" required style={inputStyle} value={formValues.pain_0_10} onChange={updateField('pain_0_10')} />
+              </div>
+              <div>
+                <label style={labelStyle}>Systolic BP (mmHg)</label>
+                <input type="number" required style={inputStyle} value={formValues.systolic_bp} onChange={updateField('systolic_bp')} />
+              </div>
+              <div>
+                <label style={labelStyle}>Diastolic BP (mmHg)</label>
+                <input type="number" required style={inputStyle} value={formValues.diastolic_bp} onChange={updateField('diastolic_bp')} />
+              </div>
+              <div>
+                <label style={labelStyle}>Height (ft)</label>
+                <input type="number" required style={inputStyle} value={formValues.height_ft} onChange={updateField('height_ft')} />
+              </div>
+              <div>
+                <label style={labelStyle}>Height (in)</label>
+                <input type="number" required style={inputStyle} value={formValues.height_in} onChange={updateField('height_in')} />
+              </div>
+              <div>
+                <label style={labelStyle}>Weight (lb)</label>
+                <input type="number" required style={inputStyle} value={formValues.weight_lb} onChange={updateField('weight_lb')} />
+              </div>
             </div>
           </div>
 
@@ -127,6 +192,11 @@ export default function SubmitVitalsPage() {
             <div style={{ fontSize: '50px', color: '#28a745' }}>✓</div>
             <h2>Submission Complete!</h2>
             <p>The submitted vitals are complete and recorded.</p>
+            {prediction && (
+              <p style={{ marginTop: '10px' }}>
+                Risk: <strong>{prediction.pred_flag === 1 ? 'High' : 'Low'}</strong> — Probability: {prediction.p_flag.toFixed(4)}
+              </p>
+            )}
             <button onClick={() => setShowModal(false)} style={btnStyle}>Close</button>
           </div>
         </div>
