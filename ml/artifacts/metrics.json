@@ -1,0 +1,37 @@
+{
+  "n_rows": 91000,
+  "n_features": 9,
+  "positive_rate": 0.2,
+  "threshold": 0.5,
+  "age_group_thresholds": {
+    "adult": 0.12000000000000001,
+    "child": 0.15000000000000002,
+    "neonate": 0.1,
+    "senior": 0.18,
+    "teen": 0.1
+  },
+  "accuracy": 1.0,
+  "balanced_accuracy": 1.0,
+  "precision": 1.0,
+  "recall": 1.0,
+  "f1": 1.0,
+  "roc_auc": 1.0,
+  "pr_auc": 1.0,
+  "confusion_matrix": {
+    "tn": 18200,
+    "fp": 0,
+    "fn": 0,
+    "tp": 4550
+  },
+  "feature_names": [
+    "age_years",
+    "bp_systolic",
+    "bp_diastolic",
+    "heart_rate",
+    "temperature",
+    "respiratory_rate",
+    "oxygen_saturation",
+    "pulse_pressure",
+    "pain_level"
+  ]
+}

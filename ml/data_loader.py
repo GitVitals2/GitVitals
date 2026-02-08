@@ -17,7 +17,8 @@ def get_database_url() -> str:
     url = os.environ.get("DATABASE_URL") or os.environ.get("SUPABASE_DB_URL")
     if not url:
         raise ValueError(
-            "ADD  SUPABASE_DB_URL environment variable.\n"
+            "Set the DATABASE_URL or SUPABASE_DB_URL environment variable "
+            "to connect to Postgres."
         )
     return url
 
@@ -75,8 +76,8 @@ def load_training_data_from_db(
     # Drop rows with NaN in target
     df = df.dropna(subset=["at_risk"])
 
-    print(f"✅ Loaded {len(df)} training rows from {view_name}")
-    print(f"   Features: {[c for c in df.columns if c != 'at_risk']}")
-    print(f"   Target distribution: {df['at_risk'].value_counts().to_dict()}")
+    print(f"Loaded {len(df)} training rows from {view_name}")
+    print(f"  Features: {[c for c in df.columns if c != 'at_risk']}")
+    print(f"  Target distribution: {df['at_risk'].value_counts().to_dict()}")
 
     return df

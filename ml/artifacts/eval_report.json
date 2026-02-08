@@ -1,0 +1,24 @@
+{
+  "overall": {
+    "accuracy": 1.0,
+    "balanced_accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "roc_auc": 1.0,
+    "pr_auc": 1.0,
+    "confusion_matrix": {
+      "tn": 18200,
+      "fp": 0,
+      "fn": 0,
+      "tp": 4550
+    }
+  },
+  "age_group_thresholds": {
+    "adult": 0.12000000000000001,
+    "child": 0.15000000000000002,
+    "neonate": 0.1,
+    "senior": 0.18,
+    "teen": 0.1
+  }
+}

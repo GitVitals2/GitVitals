@@ -220,10 +220,10 @@ def main() -> None:
     out = train_model(df, threshold=args.threshold)
     outputs = save_artifacts(out["model"], out["metrics"], out.get("eval_report"))
 
-    print(" Training complete")
-    print(f" Source: {args.source}")
-    print(f" Model:   {outputs.model_path}")
-    print(f" Metrics: {outputs.metrics_path}")
+    print("Training complete")
+    print(f"Source: {args.source}")
+    print(f"Model:   {outputs.model_path}")
+    print(f"Metrics: {outputs.metrics_path}")
     print(json.dumps(out["metrics"], indent=2))
 
 

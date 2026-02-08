@@ -13,11 +13,15 @@ __pycache__/
 # OS noise
 .DS_Store
 
-# Model artifacts (don’t commit trained binaries)
+# Training data (CSV files are too large for version control)
+data/
+
+# Model artifacts (large binary files)
 *.joblib
 *.pkl
-models/
-artifacts/
+
+# Keep metrics/eval JSON files tracked (needed at runtime)
+# Use: git add -f artifacts/metrics.json artifacts/eval_report.json
 
 # Logs
 *.log

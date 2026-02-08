@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 export default function SubmitVitalsPage() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -24,7 +24,7 @@ export default function SubmitVitalsPage() {
     pain_0_10: '',
   });
 
-  // Mock de pacientes (Isso viria do seu banco via Prisma no futuro)
+  // Placeholder patient list (will be replaced by Prisma DB query)
   const patients = [
     { id: 1, name: 'John Smith' },
     { id: 2, name: 'Mary Johnson' },
@@ -51,7 +51,7 @@ export default function SubmitVitalsPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedPatient) return alert('Selecione um paciente');
+    if (!selectedPatient) return alert('Please select a patient first.');
 
     setValidation({});
     setPrediction(null);
@@ -78,7 +78,7 @@ export default function SubmitVitalsPage() {
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data?.message || 'Erro ao enviar os dados');
+      if (!res.ok) throw new Error(data?.message || 'Failed to submit vitals data.');
 
       if (data?.prediction) {
         setPrediction({ pred_flag: data.prediction.pred_flag, p_flag: data.prediction.p_flag });
@@ -86,7 +86,7 @@ export default function SubmitVitalsPage() {
 
       setShowModal(true);
     } catch (error: any) {
-      alert(error?.message || 'Erro ao enviar os dados');
+      alert(error?.message || 'Failed to submit vitals data.');
     }
   };
 
@@ -205,7 +205,7 @@ export default function SubmitVitalsPage() {
   );
 }
 
-// Estilos rápidos convertidos do original
+// Inline styles
 const cardStyle: React.CSSProperties = { background: 'white', borderRadius: '15px', padding: '30px', marginBottom: '20px', boxShadow: '0 5px 20px rgba(0,0,0,0.05)' };
 const titleStyle: React.CSSProperties = { fontSize: '18px', borderBottom: '2px solid #667eea', paddingBottom: '10px', marginBottom: '20px' };
 const labelStyle: React.CSSProperties = { display: 'block', marginBottom: '8px', fontSize: '14px', color: '#555' };
