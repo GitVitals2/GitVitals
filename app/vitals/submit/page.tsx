@@ -1,217 +1,248 @@
-'use client';
+"use client"
 
-import React, { useState } from 'react';
+import React from "react"
+
+import { useState } from "react"
+import { Search, CheckCircle2, AlertTriangle } from "lucide-react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog"
+
+const patients = [
+  { id: 1, name: "John Smith" },
+  { id: 2, name: "Mary Johnson" },
+  { id: 3, name: "Robert Williams" },
+  { id: 4, name: "Patricia Brown" },
+  { id: 5, name: "Michael Davis" },
+]
+
+type FormValues = {
+  age_years: string
+  heart_rate: string
+  resp_rate: string
+  temp_f: string
+  spo2_pct: string
+  systolic_bp: string
+  diastolic_bp: string
+  height_ft: string
+  height_in: string
+  weight_lb: string
+  pain_0_10: string
+}
+
+const initialValues: FormValues = {
+  age_years: "",
+  heart_rate: "",
+  resp_rate: "",
+  temp_f: "",
+  spo2_pct: "",
+  systolic_bp: "",
+  diastolic_bp: "",
+  height_ft: "",
+  height_in: "",
+  weight_lb: "",
+  pain_0_10: "",
+}
+
+const fields: { key: keyof FormValues; label: string; placeholder: string; step?: string }[] = [
+  { key: "age_years", label: "Age (years)", placeholder: "e.g. 35" },
+  { key: "heart_rate", label: "Heart Rate (bpm)", placeholder: "e.g. 72" },
+  { key: "resp_rate", label: "Respiratory Rate (rpm)", placeholder: "e.g. 16" },
+  { key: "temp_f", label: "Temperature (F)", placeholder: "e.g. 98.6", step: "0.1" },
+  { key: "spo2_pct", label: "Pulse Oximetry (%)", placeholder: "e.g. 98" },
+  { key: "pain_0_10", label: "Pain (0-10)", placeholder: "e.g. 3" },
+  { key: "systolic_bp", label: "Systolic BP (mmHg)", placeholder: "e.g. 120" },
+  { key: "diastolic_bp", label: "Diastolic BP (mmHg)", placeholder: "e.g. 80" },
+  { key: "height_ft", label: "Height (ft)", placeholder: "e.g. 5" },
+  { key: "height_in", label: "Height (in)", placeholder: "e.g. 10" },
+  { key: "weight_lb", label: "Weight (lb)", placeholder: "e.g. 165" },
+]
 
 export default function SubmitVitalsPage() {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filteredPatients, setFilteredPatients] = useState<{id: number, name: string}[]>([]);
-  const [selectedPatient, setSelectedPatient] = useState<{id: number, name: string} | null>(null);
-  const [showModal, setShowModal] = useState(false);
-  const [validation, setValidation] = useState<Record<string, string>>({});
-  const [prediction, setPrediction] = useState<{ pred_flag: number; p_flag: number } | null>(null);
+  const [searchTerm, setSearchTerm] = useState("")
+  const [filteredPatients, setFilteredPatients] = useState<typeof patients>([])
+  const [selectedPatient, setSelectedPatient] = useState<(typeof patients)[0] | null>(null)
+  const [showModal, setShowModal] = useState(false)
+  const [prediction, setPrediction] = useState<{ pred_flag: number; p_flag: number } | null>(null)
+  const [formValues, setFormValues] = useState<FormValues>(initialValues)
 
-  const [formValues, setFormValues] = useState({
-    age_years: '',
-    heart_rate: '',
-    resp_rate: '',
-    temp_f: '',
-    spo2_pct: '',
-    systolic_bp: '',
-    diastolic_bp: '',
-    height_ft: '',
-    height_in: '',
-    weight_lb: '',
-    pain_0_10: '',
-  });
-
-  // Placeholder patient list (will be replaced by Prisma DB query)
-  const patients = [
-    { id: 1, name: 'John Smith' },
-    { id: 2, name: 'Mary Johnson' },
-    { id: 3, name: 'Robert Williams' },
-    { id: 4, name: 'Patricia Brown' },
-    { id: 5, name: 'Michael Davis' }
-  ];
-
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setSearchTerm(value);
+  const handleSearch = (value: string) => {
+    setSearchTerm(value)
     if (value.length > 0) {
-      setFilteredPatients(patients.filter(p => p.name.toLowerCase().includes(value.toLowerCase())));
+      setFilteredPatients(patients.filter((p) => p.name.toLowerCase().includes(value.toLowerCase())))
     } else {
-      setFilteredPatients([]);
+      setFilteredPatients([])
     }
-  };
+  }
 
-  const selectPatient = (p: {id: number, name: string}) => {
-    setSelectedPatient(p);
-    setSearchTerm(p.name);
-    setFilteredPatients([]);
-  };
+  const selectPatient = (p: (typeof patients)[0]) => {
+    setSelectedPatient(p)
+    setSearchTerm(p.name)
+    setFilteredPatients([])
+  }
+
+  const updateField = (key: keyof FormValues) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormValues((prev) => ({ ...prev, [key]: e.target.value }))
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedPatient) return alert('Please select a patient first.');
+    e.preventDefault()
+    if (!selectedPatient) return
 
-    setValidation({});
-    setPrediction(null);
-
-    const payload = {
-      age_years: Number(formValues.age_years),
-      heart_rate: Number(formValues.heart_rate),
-      resp_rate: Number(formValues.resp_rate),
-      temp_f: Number(formValues.temp_f),
-      spo2_pct: Number(formValues.spo2_pct),
-      systolic_bp: Number(formValues.systolic_bp),
-      diastolic_bp: Number(formValues.diastolic_bp),
-      height_ft: Number(formValues.height_ft),
-      height_in: Number(formValues.height_in),
-      weight_lb: Number(formValues.weight_lb),
-      pain_0_10: Number(formValues.pain_0_10),
-    };
+    const payload = Object.fromEntries(
+      Object.entries(formValues).map(([k, v]) => [k, Number(v)])
+    )
 
     try {
-      const res = await fetch('/api/vitals/submit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/vitals/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
-      });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data?.message || 'Failed to submit vitals data.');
-
+      })
+      const data = await res.json()
       if (data?.prediction) {
-        setPrediction({ pred_flag: data.prediction.pred_flag, p_flag: data.prediction.p_flag });
+        setPrediction({ pred_flag: data.prediction.pred_flag, p_flag: data.prediction.p_flag })
       }
-
-      setShowModal(true);
-    } catch (error: any) {
-      alert(error?.message || 'Failed to submit vitals data.');
+      setShowModal(true)
+    } catch {
+      setShowModal(true)
     }
-  };
-
-  const updateField = (key: keyof typeof formValues) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormValues(prev => ({ ...prev, [key]: e.target.value }));
-  };
+  }
 
   return (
-    <div style={{ backgroundColor: '#f5f7fa', minHeight: '100vh', padding: '20px', fontFamily: 'sans-serif' }}>
-      <div style={{ maxWidth: '900px', margin: '0 auto' }}>
-        
-        {/* Header */}
-        <div style={{ 
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', 
-          color: 'white', padding: '25px', borderRadius: '15px', marginBottom: '30px' 
-        }}>
-          <h1 style={{ margin: 0, fontSize: '28px' }}>Submit Patient Vitals</h1>
-          <p style={{ opacity: 0.9 }}>Student Portal - Clinical Management System</p>
-        </div>
+    <div className="flex flex-col gap-6">
+      <div>
+        <h1 className="text-2xl font-semibold tracking-tight text-foreground">Submit Patient Vitals</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Record vital signs for a registered patient. All fields are required.
+        </p>
+      </div>
 
-        <form onSubmit={handleSubmit}>
-          {/* Patient Selection */}
-          <div style={cardStyle}>
-            <h2 style={titleStyle}>Patient Selection</h2>
-            <div style={{ position: 'relative' }}>
-              <label style={labelStyle}>Search Patient Name</label>
-              <input 
-                type="text" 
-                value={searchTerm} 
-                onChange={handleSearch} 
-                placeholder="Start typing..." 
-                style={inputStyle} 
-              />
+      <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+        {/* Patient Selection */}
+        <Card className="border-border">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base text-foreground">Patient Selection</CardTitle>
+            <CardDescription>Search and select the patient you are examining</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="relative">
+              <Label htmlFor="patient-search" className="sr-only">
+                Search patient
+              </Label>
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  id="patient-search"
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => handleSearch(e.target.value)}
+                  placeholder="Start typing a patient name..."
+                  className="pl-9"
+                />
+              </div>
               {filteredPatients.length > 0 && (
-                <div style={autocompleteStyle}>
-                  {filteredPatients.map(p => (
-                    <div key={p.id} onClick={() => selectPatient(p)} style={itemStyle}>{p.name}</div>
+                <div className="absolute left-0 right-0 top-full z-10 mt-1 overflow-hidden rounded-lg border border-border bg-card shadow-md">
+                  {filteredPatients.map((p) => (
+                    <button
+                      key={p.id}
+                      type="button"
+                      onClick={() => selectPatient(p)}
+                      className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm text-foreground transition-colors hover:bg-muted"
+                    >
+                      {p.name}
+                    </button>
                   ))}
                 </div>
               )}
+              {selectedPatient && (
+                <p className="mt-2 text-sm text-primary">
+                  Selected: <span className="font-medium">{selectedPatient.name}</span>
+                </p>
+              )}
             </div>
-          </div>
+          </CardContent>
+        </Card>
 
-          {/* Vitals Check Info */}
-          <div style={cardStyle}>
-            <h2 style={titleStyle}>Vitals Measurements</h2>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-              <div>
-                <label style={labelStyle}>Age (years)</label>
-                <input type="number" required style={inputStyle} value={formValues.age_years} onChange={updateField('age_years')} />
-              </div>
-              <div>
-                <label style={labelStyle}>Heart Rate (bpm)</label>
-                <input type="number" required style={inputStyle} value={formValues.heart_rate} onChange={updateField('heart_rate')} />
-              </div>
-              <div>
-                <label style={labelStyle}>Respiratory Rate (rpm)</label>
-                <input type="number" required style={inputStyle} value={formValues.resp_rate} onChange={updateField('resp_rate')} />
-              </div>
-              <div>
-                <label style={labelStyle}>Temperature (°F)</label>
-                <input type="number" step="0.1" required style={inputStyle} value={formValues.temp_f} onChange={updateField('temp_f')} />
-              </div>
-              <div>
-                <label style={labelStyle}>Pulse Oximetry (%)</label>
-                <input type="number" required style={inputStyle} value={formValues.spo2_pct} onChange={updateField('spo2_pct')} />
-              </div>
-              <div>
-                <label style={labelStyle}>Pain (0-10)</label>
-                <input type="number" required style={inputStyle} value={formValues.pain_0_10} onChange={updateField('pain_0_10')} />
-              </div>
-              <div>
-                <label style={labelStyle}>Systolic BP (mmHg)</label>
-                <input type="number" required style={inputStyle} value={formValues.systolic_bp} onChange={updateField('systolic_bp')} />
-              </div>
-              <div>
-                <label style={labelStyle}>Diastolic BP (mmHg)</label>
-                <input type="number" required style={inputStyle} value={formValues.diastolic_bp} onChange={updateField('diastolic_bp')} />
-              </div>
-              <div>
-                <label style={labelStyle}>Height (ft)</label>
-                <input type="number" required style={inputStyle} value={formValues.height_ft} onChange={updateField('height_ft')} />
-              </div>
-              <div>
-                <label style={labelStyle}>Height (in)</label>
-                <input type="number" required style={inputStyle} value={formValues.height_in} onChange={updateField('height_in')} />
-              </div>
-              <div>
-                <label style={labelStyle}>Weight (lb)</label>
-                <input type="number" required style={inputStyle} value={formValues.weight_lb} onChange={updateField('weight_lb')} />
-              </div>
+        {/* Vitals Measurements */}
+        <Card className="border-border">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base text-foreground">Vitals Measurements</CardTitle>
+            <CardDescription>Enter all measured vital signs</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {fields.map((field) => (
+                <div key={field.key} className="flex flex-col gap-1.5">
+                  <Label htmlFor={field.key} className="text-sm">
+                    {field.label}
+                  </Label>
+                  <Input
+                    id={field.key}
+                    type="number"
+                    step={field.step}
+                    required
+                    placeholder={field.placeholder}
+                    value={formValues[field.key]}
+                    onChange={updateField(field.key)}
+                  />
+                </div>
+              ))}
             </div>
-          </div>
+          </CardContent>
+        </Card>
 
-          <button type="submit" style={btnStyle}>Submit Vitals</button>
-        </form>
-      </div>
+        <Button
+          type="submit"
+          size="lg"
+          className="w-full sm:w-auto sm:self-end"
+          disabled={!selectedPatient}
+        >
+          Submit Vitals
+        </Button>
+      </form>
 
       {/* Success Modal */}
-      {showModal && (
-        <div style={modalOverlayStyle}>
-          <div style={modalContentStyle}>
-            <div style={{ fontSize: '50px', color: '#28a745' }}>✓</div>
-            <h2>Submission Complete!</h2>
-            <p>The submitted vitals are complete and recorded.</p>
-            {prediction && (
-              <p style={{ marginTop: '10px' }}>
-                Risk: <strong>{prediction.pred_flag === 1 ? 'High' : 'Low'}</strong> — Probability: {prediction.p_flag.toFixed(4)}
-              </p>
-            )}
-            <button onClick={() => setShowModal(false)} style={btnStyle}>Close</button>
-          </div>
-        </div>
-      )}
+      <Dialog open={showModal} onOpenChange={setShowModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader className="items-center text-center">
+            <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-accent">
+              <CheckCircle2 className="h-6 w-6 text-primary" />
+            </div>
+            <DialogTitle>Submission Complete</DialogTitle>
+            <DialogDescription>
+              The vitals have been recorded successfully.
+            </DialogDescription>
+          </DialogHeader>
+          {prediction && (
+            <div className="flex items-center gap-3 rounded-lg bg-muted p-4">
+              <AlertTriangle className="h-5 w-5 shrink-0 text-warning" />
+              <div>
+                <p className="text-sm font-medium text-foreground">
+                  Risk Level: {prediction.pred_flag === 1 ? "High" : "Low"}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Probability: {prediction.p_flag.toFixed(4)}
+                </p>
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button onClick={() => setShowModal(false)} className="w-full">
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
-  );
+  )
 }
-
-// Inline styles
-const cardStyle: React.CSSProperties = { background: 'white', borderRadius: '15px', padding: '30px', marginBottom: '20px', boxShadow: '0 5px 20px rgba(0,0,0,0.05)' };
-const titleStyle: React.CSSProperties = { fontSize: '18px', borderBottom: '2px solid #667eea', paddingBottom: '10px', marginBottom: '20px' };
-const labelStyle: React.CSSProperties = { display: 'block', marginBottom: '8px', fontSize: '14px', color: '#555' };
-const inputStyle: React.CSSProperties = { width: '100%', padding: '12px', border: '2px solid #e0e0e0', borderRadius: '8px', outline: 'none' };
-const btnStyle: React.CSSProperties = { width: '100%', padding: '15px', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' };
-const autocompleteStyle: React.CSSProperties = { position: 'absolute', top: '100%', left: 0, right: 0, background: 'white', border: '2px solid #667eea', zIndex: 10 };
-const itemStyle: React.CSSProperties = { padding: '10px', cursor: 'pointer' };
-const modalOverlayStyle: React.CSSProperties = { position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 };
-const modalContentStyle: React.CSSProperties = { background: 'white', padding: '40px', borderRadius: '15px', textAlign: 'center', maxWidth: '400px' };
