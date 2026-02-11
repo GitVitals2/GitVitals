@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export default async function InstructorReviewsPage() {
   const pending = await prisma.vitalReadings.findMany({
-    where: { status: 'PENDING' },
+    where: { isCorrect: false },
     orderBy: { submittedAt: 'asc' },
     include: {
       student: true,
