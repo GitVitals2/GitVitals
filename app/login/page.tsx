@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { signInUser } from '@/lib/supabase';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -23,7 +22,16 @@ export default function LoginPage() {
     }
 
     try {
-      const result = await signInUser(email, password) as { success: boolean; error?: string };
+      // Call the API route that uses Prisma first, then Supabase
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const result = await response.json();
       
       if (!result.success) {
         setError(result.error || 'Login failed');
