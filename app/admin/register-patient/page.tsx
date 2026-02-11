@@ -1,40 +1,44 @@
-"use client"
+"use client";
 
-import React from "react"
+import React from "react";
 
-import { useState } from "react"
-import { CheckCircle2, Info } from "lucide-react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Button } from "@/components/ui/button"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Alert, AlertDescription } from "@/components/ui/alert"
+import { useState } from "react";
+import { CheckCircle2, Info } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog"
+  DialogFooter
+} from "@/components/ui/dialog";
 
 type FormData = {
-  patientName: string
-  patientDOB: string
-  height: string
-  weight: string
-  shoes: string
-  pulseOximetry: string
-  temperature: string
-  pulse: string
-  respiration: string
-  bloodPressure: string
-}
+  patientName: string;
+  patientDOB: string;
+  patientGender: string;
+  patientRelationship: string;
+  height: string;
+  weight: string;
+  shoes: string;
+  pulseOximetry: string;
+  temperature: string;
+  pulse: string;
+  respiration: string;
+  bloodPressure: string;
+};
 
 const initialData: FormData = {
   patientName: "",
   patientDOB: "",
+  patientGender: "",
+  patientRelationship: "",
   height: "",
   weight: "",
   shoes: "",
@@ -42,27 +46,51 @@ const initialData: FormData = {
   temperature: "",
   pulse: "",
   respiration: "",
-  bloodPressure: "",
-}
+  bloodPressure: ""
+};
 
 export default function RegisterPatientPage() {
-  const [showModal, setShowModal] = useState(false)
-  const [formData, setFormData] = useState<FormData>(initialData)
+  const [showModal, setShowModal] = useState(false);
+  const [formData, setFormData] = useState<FormData>(initialData);
 
   const handleChange = (key: keyof FormData, value: string) => {
-    setFormData((prev) => ({ ...prev, [key]: value }))
-  }
+    setFormData(prev => ({ ...prev, [key]: value }));
+  };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    console.log("Registering patient:", formData)
-    setShowModal(true)
-  }
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const patientAge = Math.floor(
+      (new Date().getTime() - new Date(formData.patientDOB).getTime()) / (1000 * 60 * 60 * 24 * 365.25)
+    );
+
+    const response = await fetch("/api/patient/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        student_id: null,
+        name: formData.patientName,
+        relationship: formData.patientRelationship,
+        age: patientAge,
+        gender: formData.patientGender
+      })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      alert("Error registering patient: " + errorData.message);
+      return;
+    }
+
+    setShowModal(true);
+  };
 
   const closeModal = () => {
-    setShowModal(false)
-    setFormData(initialData)
-  }
+    setShowModal(false);
+    setFormData(initialData);
+  };
 
   return (
     <div className="flex flex-col gap-6">
@@ -98,7 +126,7 @@ export default function RegisterPatientPage() {
                 required
                 placeholder="Full name"
                 value={formData.patientName}
-                onChange={(e) => handleChange("patientName", e.target.value)}
+                onChange={e => handleChange("patientName", e.target.value)}
               />
             </div>
             <div className="flex flex-col gap-1.5">
@@ -108,7 +136,7 @@ export default function RegisterPatientPage() {
                 type="date"
                 required
                 value={formData.patientDOB}
-                onChange={(e) => handleChange("patientDOB", e.target.value)}
+                onChange={e => handleChange("patientDOB", e.target.value)}
               />
             </div>
           </CardContent>
@@ -131,7 +159,7 @@ export default function RegisterPatientPage() {
                   required
                   placeholder="e.g. 5.8"
                   value={formData.height}
-                  onChange={(e) => handleChange("height", e.target.value)}
+                  onChange={e => handleChange("height", e.target.value)}
                 />
               </div>
               <div className="flex flex-col gap-1.5">
@@ -143,17 +171,13 @@ export default function RegisterPatientPage() {
                   required
                   placeholder="e.g. 165"
                   value={formData.weight}
-                  onChange={(e) => handleChange("weight", e.target.value)}
+                  onChange={e => handleChange("weight", e.target.value)}
                 />
               </div>
             </div>
             <div className="mt-4 flex flex-col gap-1.5">
               <Label htmlFor="shoes">Wearing Shoes</Label>
-              <Select
-                value={formData.shoes}
-                onValueChange={(value) => handleChange("shoes", value)}
-                required
-              >
+              <Select value={formData.shoes} onValueChange={value => handleChange("shoes", value)} required>
                 <SelectTrigger id="shoes">
                   <SelectValue placeholder="Select..." />
                 </SelectTrigger>
@@ -182,7 +206,7 @@ export default function RegisterPatientPage() {
                   required
                   placeholder="e.g. 98"
                   value={formData.pulseOximetry}
-                  onChange={(e) => handleChange("pulseOximetry", e.target.value)}
+                  onChange={e => handleChange("pulseOximetry", e.target.value)}
                 />
               </div>
               <div className="flex flex-col gap-1.5">
@@ -194,7 +218,7 @@ export default function RegisterPatientPage() {
                   required
                   placeholder="e.g. 98.6"
                   value={formData.temperature}
-                  onChange={(e) => handleChange("temperature", e.target.value)}
+                  onChange={e => handleChange("temperature", e.target.value)}
                 />
               </div>
               <div className="flex flex-col gap-1.5">
@@ -205,7 +229,7 @@ export default function RegisterPatientPage() {
                   required
                   placeholder="e.g. 72"
                   value={formData.pulse}
-                  onChange={(e) => handleChange("pulse", e.target.value)}
+                  onChange={e => handleChange("pulse", e.target.value)}
                 />
               </div>
               <div className="flex flex-col gap-1.5">
@@ -216,7 +240,7 @@ export default function RegisterPatientPage() {
                   required
                   placeholder="e.g. 16"
                   value={formData.respiration}
-                  onChange={(e) => handleChange("respiration", e.target.value)}
+                  onChange={e => handleChange("respiration", e.target.value)}
                 />
               </div>
             </div>
@@ -228,7 +252,7 @@ export default function RegisterPatientPage() {
                 required
                 placeholder="e.g. 120/80"
                 value={formData.bloodPressure}
-                onChange={(e) => handleChange("bloodPressure", e.target.value)}
+                onChange={e => handleChange("bloodPressure", e.target.value)}
               />
             </div>
           </CardContent>
@@ -247,9 +271,7 @@ export default function RegisterPatientPage() {
               <CheckCircle2 className="h-6 w-6 text-primary" />
             </div>
             <DialogTitle>Registration Successful</DialogTitle>
-            <DialogDescription>
-              The patient has been registered with reference vitals.
-            </DialogDescription>
+            <DialogDescription>The patient has been registered with reference vitals.</DialogDescription>
           </DialogHeader>
           <div className="rounded-lg bg-muted p-4 text-sm">
             <div className="flex flex-col gap-2">
@@ -275,5 +297,5 @@ export default function RegisterPatientPage() {
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }

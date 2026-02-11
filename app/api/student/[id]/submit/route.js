@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import prisma from "../../../../../lib/prisma";
+import prisma from "@/lib/prisma";
 
 /**
  * POST /api/student/[id]/submit
@@ -41,8 +41,4 @@ async function saveDataToDatabase(studentId, data) {
       submittedAt: new Date()
     }
   });
-
-  // if (response.error) {
-  //   throw new Error(response.error.details + ' ' + response.error.message);
-  // }
 }
