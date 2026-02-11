@@ -215,7 +215,7 @@ export default function InstructorPage() {
                 <Switch
                   id="isCorrect"
                   checked={grading.isCorrect}
-                  onCheckedChange={(checked) => setGrading({ ...grading, isCorrect: checked })}
+                  onChange={(event) => setGrading({ ...grading, isCorrect: event.target.checked })}
                 />
                 <Label htmlFor="isCorrect">
                   {grading.isCorrect ? "Marked as Correct" : "Marked as Incorrect"}
