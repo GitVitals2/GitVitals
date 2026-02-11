@@ -19,17 +19,32 @@ import {
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 
-const navItems = [
+type UserRole = "student" | "instructor"
+
+const studentNav = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/submit-vitals", label: "Submit Vitals", icon: HeartPulse },
-  { href: "/register-patient", label: "Register Patient", icon: UserPlus },
-  { href: "/verify-submissions", label: "Verify Submissions", icon: ClipboardCheck },
-  { href: "/instructor", label: "Instructor Panel", icon: Settings },
+  { href: "/vitals/submit", label: "Submit Vitals", icon: HeartPulse },
+]
+
+const instructorNav = [
+  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/admin/register-patient", label: "Register Patient", icon: UserPlus },
+  { href: "/admin/verify", label: "Verify Submissions", icon: ClipboardCheck },
+  { href: "/instructor/reviews", label: "Grade Submissions", icon: Settings },
 ]
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [role] = useState<UserRole>(() => {
+    if (typeof window === "undefined") {
+      return "student"
+    }
+    const storedRole = window.localStorage.getItem("gv-role")
+    return storedRole === "student" || storedRole === "instructor" ? storedRole : "student"
+  })
+
+  const navItems = role === "instructor" ? instructorNav : studentNav
 
   return (
     <div className="flex min-h-screen bg-background">

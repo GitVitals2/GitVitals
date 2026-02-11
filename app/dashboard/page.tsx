@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { useState } from "react"
 import {
   HeartPulse,
   UserPlus,
@@ -15,7 +16,36 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 
-const stats = [
+type UserRole = "student" | "instructor"
+
+const studentStats = [
+  {
+    label: "Your Submissions",
+    value: "18",
+    change: "+2 this week",
+    icon: FileCheck,
+  },
+  {
+    label: "Pending Grades",
+    value: "4",
+    change: "Awaiting review",
+    icon: Clock,
+  },
+  {
+    label: "Accuracy Rate",
+    value: "92%",
+    change: "+1% improvement",
+    icon: TrendingUp,
+  },
+  {
+    label: "Classmates Tested",
+    value: "9",
+    change: "On track",
+    icon: Users,
+  },
+]
+
+const instructorStats = [
   {
     label: "Total Submissions",
     value: "128",
@@ -42,29 +72,44 @@ const stats = [
   },
 ]
 
-const quickActions = [
+const studentActions = [
   {
     title: "Submit Vitals",
     description: "Record patient vital signs for grading",
-    href: "/submit-vitals",
+    href: "/vitals/submit",
     icon: HeartPulse,
   },
+]
+
+const instructorActions = [
   {
     title: "Register Patient",
     description: "Add a new patient with reference vitals",
-    href: "/register-patient",
+    href: "/admin/register-patient",
     icon: UserPlus,
   },
   {
     title: "Verify Submissions",
-    description: "Review and compare student submissions",
-    href: "/verify-submissions",
+    description: "Compare student submissions to reference values",
+    href: "/admin/verify",
     icon: ClipboardCheck,
+  },
+  {
+    title: "Grade Submissions",
+    description: "Review and grade student vitals",
+    href: "/instructor/reviews",
+    icon: FileCheck,
   },
 ]
 
-const recentActivity = [
+const studentActivity = [
   { action: "Vitals submitted for John Smith", time: "2 hours ago", status: "Pending" },
+  { action: "Vitals submitted for Robert Williams", time: "1 day ago", status: "Pending" },
+  { action: "Submission graded by Dr. Wilson", time: "1 day ago", status: "Graded" },
+  { action: "Vitals submitted for Mary Johnson", time: "2 days ago", status: "Pending" },
+]
+
+const instructorActivity = [
   { action: "Patient Mary Johnson registered", time: "5 hours ago", status: "Complete" },
   { action: "Submission graded by Dr. Wilson", time: "1 day ago", status: "Graded" },
   { action: "Vitals submitted for Robert Williams", time: "1 day ago", status: "Pending" },
@@ -72,13 +117,29 @@ const recentActivity = [
 ]
 
 export default function DashboardPage() {
+  const [role] = useState<UserRole>(() => {
+    if (typeof window === "undefined") {
+      return "student"
+    }
+    const storedRole = window.localStorage.getItem("gv-role")
+    return storedRole === "student" || storedRole === "instructor" ? storedRole : "student"
+  })
+
+  const stats = role === "instructor" ? instructorStats : studentStats
+  const quickActions = role === "instructor" ? instructorActions : studentActions
+  const recentActivity = role === "instructor" ? instructorActivity : studentActivity
+
   return (
     <div className="flex flex-col gap-8">
       {/* Page header */}
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-foreground">Dashboard</h1>
+        <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+          {role === "instructor" ? "Instructor Dashboard" : "Student Dashboard"}
+        </h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Welcome back. Here is an overview of your clinical activity.
+          {role === "instructor"
+            ? "Monitor submissions, register patients, and grade student work."
+            : "Track your submissions and complete assigned vitals."}
         </p>
       </div>
 

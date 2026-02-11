@@ -144,22 +144,24 @@ describe("RegisterPage", () => {
 // DASHBOARD PAGE
 // -------------------------------------------------------
 describe("DashboardPage", () => {
+  beforeEach(() => {
+    localStorage.setItem("gv-role", "student")
+  })
+
   it("renders the dashboard with stats and quick actions", () => {
     render(<DashboardPage />)
 
-    expect(screen.getByText("Dashboard")).toBeInTheDocument()
-    expect(screen.getByText("Total Submissions")).toBeInTheDocument()
-    expect(screen.getByText("Registered Patients")).toBeInTheDocument()
-    expect(screen.getByText("Pending Reviews")).toBeInTheDocument()
+    expect(screen.getByText("Student Dashboard")).toBeInTheDocument()
+    expect(screen.getByText("Your Submissions")).toBeInTheDocument()
+    expect(screen.getByText("Pending Grades")).toBeInTheDocument()
     expect(screen.getByText("Accuracy Rate")).toBeInTheDocument()
+    expect(screen.getByText("Classmates Tested")).toBeInTheDocument()
   })
 
   it("renders quick action links", () => {
     render(<DashboardPage />)
 
     expect(screen.getByText("Submit Vitals")).toBeInTheDocument()
-    expect(screen.getByText("Register Patient")).toBeInTheDocument()
-    expect(screen.getByText("Verify Submissions")).toBeInTheDocument()
   })
 
   it("renders recent activity section", () => {

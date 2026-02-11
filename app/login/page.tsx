@@ -12,6 +12,13 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Separator } from "@/components/ui/separator"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
@@ -19,6 +26,7 @@ export default function LoginPage() {
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
+  const [role, setRole] = useState("student")
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -35,6 +43,7 @@ export default function LoginPage() {
     try {
       // Simulated login — replace with your auth logic
       await new Promise((resolve) => setTimeout(resolve, 1000))
+      localStorage.setItem("gv-role", role)
       router.push("/dashboard")
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred during sign in.")
@@ -45,6 +54,7 @@ export default function LoginPage() {
 
   const handleGoogleSignIn = () => {
     // Placeholder for Google OAuth integration
+    localStorage.setItem("gv-role", role)
     router.push("/dashboard")
   }
 
@@ -109,6 +119,19 @@ export default function LoginPage() {
             </div>
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="role">Role</Label>
+                <Select value={role} onValueChange={setRole}>
+                  <SelectTrigger id="role">
+                    <SelectValue placeholder="Select a role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="student">Student</SelectItem>
+                    <SelectItem value="instructor">Instructor</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
               <div className="flex flex-col gap-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
