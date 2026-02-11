@@ -1,7 +1,7 @@
 ### GitVitals - Instructor API Testing
 ### Use this file with REST Client VS Code extension or similar HTTP client
 
-@baseUrl = http://localhost:3000
+@baseUrl = https://gitvitals-zurq-691xoogso-mrauto-cats-projects.vercel.app
 @apiBase = {{baseUrl}}/api/instructor
 
 ### 1. Get All Submissions (No Filters)
@@ -78,6 +78,12 @@ Content-Type: application/json
 
 ### 13. Get Specific Submission (Replace {id} with submission UUID)
 GET {{apiBase}}/submissions/SUBMISSION_UUID_HERE
+Content-Type: application/json
+
+###
+
+### 14. DB Health Check
+GET {{baseUrl}}/api/health/db
 Content-Type: application/json
 
 ###

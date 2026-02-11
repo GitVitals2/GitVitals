@@ -1,9 +1,11 @@
 import prisma from '@/lib/prisma';
 import Link from 'next/link';
 
+export const dynamic = 'force-dynamic';
+
 export default async function InstructorReviewsPage() {
   const pending = await prisma.vitalReadings.findMany({
-    where: { status: 'PENDING' },
+    where: { isCorrect: false },
     orderBy: { submittedAt: 'asc' },
     include: {
       student: true,

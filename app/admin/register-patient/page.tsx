@@ -1,140 +1,279 @@
-'use client';
+"use client"
 
-import React, { useState } from 'react';
+import React from "react"
 
-export default function RegisterPatientPage() {
-  const [showModal, setShowModal] = useState(false);
-  const [formData, setFormData] = useState(() => {
-    const now = new Date();
-    return {
-      patientName: '',
-      patientDOB: '',
-      checkDate: now.toISOString().split('T')[0],
-      checkTime: now.toTimeString().slice(0, 5),
-      height: '',
-      weight: '',
-      shoes: '',
-      pulseOximetry: '',
-      temperature: '',
-      pulse: '',
-      respiration: '',
-      bloodPressure: ''
-    };
-  });
+import { useState } from "react"
+import { CheckCircle2, Info } from "lucide-react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Button } from "@/components/ui/button"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog"
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { id, value } = e.target;
-    setFormData(prev => ({ ...prev, [id]: value }));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Aqui no futuro você conectará com o Prisma/API para salvar o paciente
-    console.log('Registrando paciente:', formData);
-    setShowModal(true);
-  };
-
-  const closeModal = () => {
-    setShowModal(false);
-    if (confirm('Deseja registrar outro paciente?')) {
-      window.location.reload();
-    }
-  };
-
-  return (
-    <div style={{ backgroundColor: '#f5f7fa', minHeight: '100vh', padding: '20px', fontFamily: 'sans-serif' }}>
-      <div style={{ maxWidth: '900px', margin: '0 auto' }}>
-        
-        {/* Header */}
-        <div style={headerStyle}>
-          <h1 style={{ margin: 0, fontSize: '28px' }}>Register Patient & Correct Vitals</h1>
-          <p style={{ opacity: 0.9 }}>Teacher Portal - Clinical Management System</p>
-        </div>
-
-        <div style={infoBoxStyle}>
-          <p>📋 <strong>Nota:</strong> Cadastre o paciente com os sinais vitais corretos. Os alunos usarão estes dados como referência.</p>
-        </div>
-
-        <form onSubmit={handleSubmit}>
-          {/* Informações Pessoais */}
-          <div style={cardStyle}>
-            <h2 style={titleStyle}>👤 Patient Information</h2>
-            <div style={{ marginBottom: '15px' }}>
-              <label style={labelStyle}>Patient Name *</label>
-              <input type="text" id="patientName" required style={inputStyle} onChange={handleChange} />
-            </div>
-            <div style={{ marginBottom: '15px' }}>
-              <label style={labelStyle}>Date of Birth *</label>
-              <input type="date" id="patientDOB" required style={inputStyle} onChange={handleChange} />
-            </div>
-          </div>
-
-          {/* Medições Físicas */}
-          <div style={cardStyle}>
-            <h2 style={titleStyle}>📏 Physical Measurements</h2>
-            <div style={grid2Style}>
-              <div>
-                <label style={labelStyle}>Height (feet) *</label>
-                <input type="number" id="height" step="0.1" required style={inputStyle} onChange={handleChange} />
-              </div>
-              <div>
-                <label style={labelStyle}>Weight (lbs) *</label>
-                <input type="number" id="weight" step="0.1" required style={inputStyle} onChange={handleChange} />
-              </div>
-            </div>
-            <div style={{ marginTop: '15px' }}>
-              <label style={labelStyle}>Wearing Shoes *</label>
-              <select id="shoes" required style={inputStyle} onChange={handleChange}>
-                <option value="">Select...</option>
-                <option value="with">With shoes</option>
-                <option value="without">Without shoes</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Sinais Vitais de Referência */}
-          <div style={cardStyle}>
-            <h2 style={titleStyle}>❤️ Correct Vital Signs (Reference)</h2>
-            <div style={grid2Style}>
-              <input type="number" id="pulseOximetry" placeholder="SpO2 %" required style={inputStyle} onChange={handleChange} />
-              <input type="number" id="temperature" placeholder="Temp °F" required style={inputStyle} onChange={handleChange} />
-              <input type="number" id="pulse" placeholder="Pulse BPM" required style={inputStyle} onChange={handleChange} />
-              <input type="number" id="respiration" placeholder="Resp RPM" required style={inputStyle} onChange={handleChange} />
-            </div>
-            <input type="text" id="bloodPressure" placeholder="Blood Pressure (120/80)" required style={{ ...inputStyle, marginTop: '15px' }} onChange={handleChange} />
-          </div>
-
-          <button type="submit" style={btnStyle}>Confirm and Register Patient</button>
-        </form>
-      </div>
-
-      {/* Modal de Sucesso */}
-      {showModal && (
-        <div style={modalOverlayStyle}>
-          <div style={modalContentStyle}>
-            <div style={{ fontSize: '50px', color: '#28a745' }}>✓</div>
-            <h2>Registration Successful!</h2>
-            <div style={{ textAlign: 'left', background: '#f8f9fa', padding: '15px', borderRadius: '8px', margin: '20px 0' }}>
-              <p><strong>Paciente:</strong> {formData.patientName}</p>
-              <p><strong>Pressão:</strong> {formData.bloodPressure} mmHg</p>
-              <p><strong>Temp:</strong> {formData.temperature} °F</p>
-            </div>
-            <button onClick={closeModal} style={btnStyle}>Close</button>
-          </div>
-        </div>
-      )}
-    </div>
-  );
+type FormData = {
+  patientName: string
+  patientDOB: string
+  height: string
+  weight: string
+  shoes: string
+  pulseOximetry: string
+  temperature: string
+  pulse: string
+  respiration: string
+  bloodPressure: string
 }
 
-// Estilos
-const headerStyle: React.CSSProperties = { background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white', padding: '25px', borderRadius: '15px', marginBottom: '20px' };
-const infoBoxStyle: React.CSSProperties = { background: '#e7f3ff', borderLeft: '4px solid #2196f3', padding: '15px', borderRadius: '8px', marginBottom: '25px' };
-const cardStyle: React.CSSProperties = { background: 'white', borderRadius: '15px', padding: '30px', marginBottom: '20px', boxShadow: '0 5px 20px rgba(0,0,0,0.05)' };
-const titleStyle: React.CSSProperties = { fontSize: '18px', borderBottom: '2px solid #667eea', paddingBottom: '10px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' };
-const labelStyle: React.CSSProperties = { display: 'block', marginBottom: '8px', fontSize: '14px', color: '#555', fontWeight: 'bold' };
-const inputStyle: React.CSSProperties = { width: '100%', padding: '12px', border: '2px solid #e0e0e0', borderRadius: '8px', outline: 'none', marginBottom: '5px' };
-const grid2Style: React.CSSProperties = { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' };
-const btnStyle: React.CSSProperties = { width: '100%', padding: '15px', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' };
-const modalOverlayStyle: React.CSSProperties = { position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 };
-const modalContentStyle: React.CSSProperties = { background: 'white', padding: '40px', borderRadius: '15px', textAlign: 'center', maxWidth: '450px', width: '90%' };
+const initialData: FormData = {
+  patientName: "",
+  patientDOB: "",
+  height: "",
+  weight: "",
+  shoes: "",
+  pulseOximetry: "",
+  temperature: "",
+  pulse: "",
+  respiration: "",
+  bloodPressure: "",
+}
+
+export default function RegisterPatientPage() {
+  const [showModal, setShowModal] = useState(false)
+  const [formData, setFormData] = useState<FormData>(initialData)
+
+  const handleChange = (key: keyof FormData, value: string) => {
+    setFormData((prev) => ({ ...prev, [key]: value }))
+  }
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    console.log("Registering patient:", formData)
+    setShowModal(true)
+  }
+
+  const closeModal = () => {
+    setShowModal(false)
+    setFormData(initialData)
+  }
+
+  return (
+    <div className="flex flex-col gap-6">
+      <div>
+        <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+          Register Patient & Correct Vitals
+        </h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Teacher Portal — Add patients with reference vital signs for student evaluations.
+        </p>
+      </div>
+
+      <Alert className="border-primary/20 bg-accent">
+        <Info className="h-4 w-4 text-primary" />
+        <AlertDescription className="text-accent-foreground">
+          Register the patient with correct vital signs. Students will use these values as a reference baseline.
+        </AlertDescription>
+      </Alert>
+
+      <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+        {/* Patient Information */}
+        <Card className="border-border">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base text-foreground">Patient Information</CardTitle>
+            <CardDescription>Basic patient identification details</CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-4">
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="patientName">Patient Name</Label>
+              <Input
+                id="patientName"
+                type="text"
+                required
+                placeholder="Full name"
+                value={formData.patientName}
+                onChange={(e) => handleChange("patientName", e.target.value)}
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="patientDOB">Date of Birth</Label>
+              <Input
+                id="patientDOB"
+                type="date"
+                required
+                value={formData.patientDOB}
+                onChange={(e) => handleChange("patientDOB", e.target.value)}
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Physical Measurements */}
+        <Card className="border-border">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base text-foreground">Physical Measurements</CardTitle>
+            <CardDescription>Record the patient&apos;s physical attributes</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="height">Height (feet)</Label>
+                <Input
+                  id="height"
+                  type="number"
+                  step="0.1"
+                  required
+                  placeholder="e.g. 5.8"
+                  value={formData.height}
+                  onChange={(e) => handleChange("height", e.target.value)}
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="weight">Weight (lbs)</Label>
+                <Input
+                  id="weight"
+                  type="number"
+                  step="0.1"
+                  required
+                  placeholder="e.g. 165"
+                  value={formData.weight}
+                  onChange={(e) => handleChange("weight", e.target.value)}
+                />
+              </div>
+            </div>
+            <div className="mt-4 flex flex-col gap-1.5">
+              <Label htmlFor="shoes">Wearing Shoes</Label>
+              <Select
+                value={formData.shoes}
+                onValueChange={(value) => handleChange("shoes", value)}
+                required
+              >
+                <SelectTrigger id="shoes">
+                  <SelectValue placeholder="Select..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="with">With shoes</SelectItem>
+                  <SelectItem value="without">Without shoes</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Correct Vital Signs */}
+        <Card className="border-border">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base text-foreground">Correct Vital Signs (Reference)</CardTitle>
+            <CardDescription>Enter the correct baseline values for grading</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="pulseOximetry">SpO2 (%)</Label>
+                <Input
+                  id="pulseOximetry"
+                  type="number"
+                  required
+                  placeholder="e.g. 98"
+                  value={formData.pulseOximetry}
+                  onChange={(e) => handleChange("pulseOximetry", e.target.value)}
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="temperature">Temperature (F)</Label>
+                <Input
+                  id="temperature"
+                  type="number"
+                  step="0.1"
+                  required
+                  placeholder="e.g. 98.6"
+                  value={formData.temperature}
+                  onChange={(e) => handleChange("temperature", e.target.value)}
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="pulse">Pulse (BPM)</Label>
+                <Input
+                  id="pulse"
+                  type="number"
+                  required
+                  placeholder="e.g. 72"
+                  value={formData.pulse}
+                  onChange={(e) => handleChange("pulse", e.target.value)}
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="respiration">Respiration (RPM)</Label>
+                <Input
+                  id="respiration"
+                  type="number"
+                  required
+                  placeholder="e.g. 16"
+                  value={formData.respiration}
+                  onChange={(e) => handleChange("respiration", e.target.value)}
+                />
+              </div>
+            </div>
+            <div className="mt-4 flex flex-col gap-1.5">
+              <Label htmlFor="bloodPressure">Blood Pressure</Label>
+              <Input
+                id="bloodPressure"
+                type="text"
+                required
+                placeholder="e.g. 120/80"
+                value={formData.bloodPressure}
+                onChange={(e) => handleChange("bloodPressure", e.target.value)}
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Button type="submit" size="lg" className="w-full sm:w-auto sm:self-end">
+          Confirm and Register Patient
+        </Button>
+      </form>
+
+      {/* Success Modal */}
+      <Dialog open={showModal} onOpenChange={setShowModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader className="items-center text-center">
+            <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-accent">
+              <CheckCircle2 className="h-6 w-6 text-primary" />
+            </div>
+            <DialogTitle>Registration Successful</DialogTitle>
+            <DialogDescription>
+              The patient has been registered with reference vitals.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="rounded-lg bg-muted p-4 text-sm">
+            <div className="flex flex-col gap-2">
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Patient</span>
+                <span className="font-medium text-foreground">{formData.patientName}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Blood Pressure</span>
+                <span className="font-medium text-foreground">{formData.bloodPressure} mmHg</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Temperature</span>
+                <span className="font-medium text-foreground">{formData.temperature} F</span>
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button onClick={closeModal} className="w-full">
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  )
+}
