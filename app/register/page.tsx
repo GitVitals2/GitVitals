@@ -18,8 +18,10 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
+  const [studentId, setStudentId] = useState("")
   const [role, setRole] = useState<"student" | "instructor">("student")
   const [error, setError] = useState("")
+  const [success, setSuccess] = useState(false)
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const router = useRouter()
@@ -29,7 +31,7 @@ export default function RegisterPage() {
     setError("")
     setLoading(true)
 
-    if (!name || !email || !password || !confirmPassword) {
+    if (!name || !email || !password || !confirmPassword || (role === "student" && !studentId)) {
       setError("Please fill in all fields.")
       setLoading(false)
       return
@@ -41,16 +43,35 @@ export default function RegisterPage() {
       return
     }
 
-    if (password.length < 8) {
-      setError("Password must be at least 8 characters.")
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters.")
       setLoading(false)
       return
     }
 
     try {
-      // Simulated registration — replace with your auth logic
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      router.push("/login")
+      const response = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email,
+          password,
+          name,
+          role,
+          studentId: role === "student" ? studentId : undefined,
+        }),
+      })
+
+      const result = await response.json()
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || "Sign up failed.")
+      }
+
+      setSuccess(true)
+      setTimeout(() => {
+        router.push("/login")
+      }, 1200)
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred during registration.")
     } finally {
@@ -81,6 +102,12 @@ export default function RegisterPage() {
             {error && (
               <Alert variant="destructive">
                 <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+
+            {success && (
+              <Alert>
+                <AlertDescription>Account created. Redirecting to sign in...</AlertDescription>
               </Alert>
             )}
 
@@ -134,13 +161,28 @@ export default function RegisterPage() {
                 </RadioGroup>
               </div>
 
+              {role === "student" && (
+                <div className="flex flex-col gap-2">
+                  <Label htmlFor="student-id">Student ID</Label>
+                  <Input
+                    id="student-id"
+                    type="text"
+                    placeholder="Enter your student ID"
+                    value={studentId}
+                    onChange={(e) => setStudentId(e.target.value)}
+                    disabled={loading}
+                    required
+                  />
+                </div>
+              )}
+
               <div className="flex flex-col gap-2">
                 <Label htmlFor="reg-password">Password</Label>
                 <div className="relative">
                   <Input
                     id="reg-password"
                     type={showPassword ? "text" : "password"}
-                    placeholder="At least 8 characters"
+                    placeholder="At least 6 characters"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     disabled={loading}
