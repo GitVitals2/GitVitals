@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
-import { getCurrentUser } from '@/lib/supabase';
+import { NextRequest, NextResponse } from "next/server";
+import prisma from "@/lib/prisma";
+import { getCurrentUserFromRequest } from "@/lib/auth";
 
 /**
  * POST /api/patient/create
@@ -10,43 +10,48 @@ import { getCurrentUser } from '@/lib/supabase';
  * @returns {NextResponse}
  */
 export async function POST(request) {
-  const data = await request.json();
+  const userResponse = await getCurrentUserFromRequest(request);
 
-  try {
-    await saveDataToDatabase(data);
-  } catch (error) {
-    console.error('Error saving patient data:', error);
-    return NextResponse.json({ message: 'Error saving patient data.', error }, { status: 500 });
+  if (!userResponse.success) {
+    return NextResponse.json({ message: "User not authenticated." }, { status: 401 });
   }
 
-  return NextResponse.json({ message: 'Patient data saved successfully.' });
+  const data = await request.json();
+
+  let patient = null;
+
+  try {
+    patient = await saveDataToDatabase(data, userResponse.user.id);
+  } catch (error) {
+    console.error("Error saving patient data:", error);
+    return NextResponse.json({ message: "Error saving patient data.", error }, { status: 500 });
+  }
+
+  return NextResponse.json({ message: "Patient data saved successfully.", data: patient });
 }
 
-async function saveDataToDatabase(data) {
-  console.log('Saving data to database:', data);
-
-  console.log('Current user: ' + (await getCurrentUser()));
-
-  const user = await getCurrentUser();
+async function saveDataToDatabase(data, userId) {
+  console.log("Saving data to database:", data);
 
   let studentConnect = undefined;
 
   if (data.student_id) {
+    let student = null;
     try {
-      const student = await prisma.student.findUnique({
+      student = await prisma.student.findUnique({
         where: { id: data.student_id }
       });
     } catch (error) {
-      console.error('Error finding student:', error);
-      throw new Error('Error finding student: ' + error.message);
+      console.error("Error finding student:", error);
+      throw new Error("Error finding student: " + error.message);
     }
     studentConnect = { connect: { id: student.id } };
   }
 
-  await prisma.patient.create({
+  return prisma.patient.create({
     data: {
       student: studentConnect,
-      userId: user.id,
+      userId: userId,
       name: data.name,
       relationship: data.relationship,
       age: data.age,

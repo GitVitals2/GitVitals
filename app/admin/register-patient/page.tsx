@@ -64,23 +64,56 @@ export default function RegisterPatientPage() {
       (new Date().getTime() - new Date(formData.patientDOB).getTime()) / (1000 * 60 * 60 * 24 * 365.25)
     );
 
-    const response = await fetch("/api/patient/create", {
+    const patientData = {
+      student_id: null,
+      name: formData.patientName,
+      relationship: formData.patientRelationship,
+      age: patientAge,
+      gender: formData.patientGender
+    };
+
+    const token = localStorage.getItem("gv-token");
+
+    const patientRegisterResponse = await fetch("/api/patient/create", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify(patientData)
+    });
+
+    if (!patientRegisterResponse.ok) {
+      const errorData = await patientRegisterResponse.json();
+      alert("Error registering patient: " + errorData.message);
+      return;
+    }
+
+    const {
+      data: { id: patientId }
+    } = await patientRegisterResponse.json();
+
+    const [systolic, diastolic] = formData.bloodPressure.split("/").map(v => parseInt(v) || 0);
+
+    const saveCorrectVitalsResponse = await fetch(`/api/patient/${patientId}/correct-vitals`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
       },
       body: JSON.stringify({
-        student_id: null,
-        name: formData.patientName,
-        relationship: formData.patientRelationship,
-        age: patientAge,
-        gender: formData.patientGender
+        bloodPressureSys: systolic,
+        bloodPressureDia: diastolic,
+        heartRate: parseInt(formData.pulse) || 0,
+        temperature: parseFloat(formData.temperature),
+        respiratoryRate: parseInt(formData.respiration) || 0,
+        oxygenSaturation: parseInt(formData.pulseOximetry) || 0
       })
     });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      alert("Error registering patient: " + errorData.message);
+    if (!saveCorrectVitalsResponse.ok) {
+      const errorData = await saveCorrectVitalsResponse.json();
+      alert("Error saving correct vitals: " + errorData.message);
       return;
     }
 
