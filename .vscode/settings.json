@@ -1,10 +1,11 @@
 {
   "cSpell.words": [
-    "mypy",
     "joblib",
+    "mypy",
+    "pytyped",
     "sklearn",
     "tsbuildinfo",
-    "pytyped"
+    "vitalreading"
   ],
   "python-envs.defaultEnvManager": "ms-python.python:system",
   "python-envs.pythonProjects": []

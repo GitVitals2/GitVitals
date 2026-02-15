@@ -70,8 +70,7 @@ describe("LoginPage", () => {
     expect(screen.getByText("GitVitals")).toBeInTheDocument()
     expect(screen.getByLabelText("Email")).toBeInTheDocument()
     expect(screen.getByLabelText("Password")).toBeInTheDocument()
-    expect(screen.getByRole("button", { name: /sign in$/i })).toBeInTheDocument()
-    expect(screen.getByRole("button", { name: /sign in with google/i })).toBeInTheDocument()
+    expect(screen.getByRole("button", { name: /sign in/i })).toBeInTheDocument()
   })
 
   it("shows validation error when form is submitted empty", async () => {
@@ -103,18 +102,25 @@ describe("LoginPage", () => {
     expect(signUpLink).toHaveAttribute("href", "/register")
   })
 
-  it("navigates to dashboard on Google sign in", async () => {
-    render(<LoginPage />)
-    const googleButton = screen.getByRole("button", { name: /sign in with google/i })
-    await userEvent.click(googleButton)
-    expect(mockPush).toHaveBeenCalledWith("/dashboard")
-  })
-
   it("submits the form and redirects on success", async () => {
+    // Mock fetch for login API
+    global.fetch = jest.fn(() =>
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve({
+          success: true,
+          user: {
+            session: { access_token: "test-token" },
+            role: "student"
+          }
+        }),
+      })
+    ) as jest.Mock
+
     render(<LoginPage />)
     const emailInput = screen.getByLabelText("Email")
     const passwordInput = screen.getByLabelText("Password")
-    const submitButton = screen.getByRole("button", { name: /sign in$/i })
+    const submitButton = screen.getByRole("button", { name: /sign in/i })
 
     await userEvent.type(emailInput, "test@example.com")
     await userEvent.type(passwordInput, "password123")
