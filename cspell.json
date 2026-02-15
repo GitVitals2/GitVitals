@@ -5,10 +5,13 @@
     "at_risk",
     "bp_diastolic",
     "bp_systolic",
+    "dbgenerated",
+    "Deduplicator",
     "docker-compose",
     "fastapi",
     "heart_rate",
     "joblib",
+    "kalman",
     "ml",
     "ml_training_data",
     "overscan",
@@ -18,9 +21,11 @@
     "psql",
     "psycopg",
     "pulse_pressure",
+    "quickselect",
     "respiratory_rate",
     "Supabase",
     "SUPABASE",
+    "Timestamptz",
     "venv"
   ]
 }

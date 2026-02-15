@@ -5,7 +5,7 @@ import React from "react"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { Activity, Eye, EyeOff, Mail } from "lucide-react"
+import { Activity, Eye, EyeOff } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -54,6 +54,8 @@ export default function LoginPage() {
 
       if (userRole === "student" || userRole === "instructor") {
         localStorage.setItem("gv-role", userRole)
+        localStorage.setItem("gv-email", email)
+        localStorage.setItem("gv-user-id", payload.user.id)
       }
 
       // Redirect to dashboard - it will show role-specific content
@@ -65,35 +67,22 @@ export default function LoginPage() {
     }
   }
 
-  const handleGoogleSignIn = async () => {
-    setError("")
-    setLoading(true)
-
-    try {
-      // Simulate OAuth flow
-      router.push("/dashboard")
-    } catch (err) {
-      setError("Google sign-in failed. Please try again.")
-      setLoading(false)
-    }
-  }
-
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background p-4">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 p-4">
       <div className="w-full max-w-md">
         {/* Logo */}
-        <div className="mb-8 flex flex-col items-center gap-2">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary">
-            <Activity className="h-6 w-6 text-primary-foreground" />
+        <div className="mb-8 flex flex-col items-center gap-3 animate-in fade-in slide-in-from-bottom-4 duration-700">
+          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-500 to-cyan-600 shadow-lg shadow-teal-500/30">
+            <Activity className="h-8 w-8 text-white animate-pulse" />
           </div>
-          <h1 className="text-xl font-semibold text-foreground">GitVitals</h1>
-          <p className="text-sm text-muted-foreground">Clinical Management System</p>
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent">GitVitals</h1>
+          <p className="text-sm text-muted-foreground font-medium">Clinical Management System</p>
         </div>
 
-        <Card className="border-border shadow-sm">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-center text-2xl text-foreground">Welcome back</CardTitle>
-            <CardDescription className="text-center">
+        <Card className="border-border shadow-2xl shadow-slate-200/50 dark:shadow-slate-900/50 backdrop-blur-sm bg-white/80 dark:bg-slate-800/80 animate-in fade-in slide-in-from-bottom-8 duration-700">
+          <CardHeader className="pb-4 space-y-1">
+            <CardTitle className="text-center text-3xl text-foreground font-bold">Welcome back</CardTitle>
+            <CardDescription className="text-center text-base">
               Sign in to your account to continue
             </CardDescription>
           </CardHeader>
@@ -122,7 +111,7 @@ export default function LoginPage() {
                 <div className="flex items-center justify-between">
                   <Label htmlFor="password">Password</Label>
                   <Link
-                    href="#"
+                    href="/forgot-password"
                     className="text-xs font-medium text-primary hover:underline"
                   >
                     Forgot password?
@@ -150,35 +139,37 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              <Button type="submit" className="w-full py-5" disabled={loading}>
-                {loading ? "Signing in..." : "Sign In"}
+              <Button 
+                type="submit" 
+                className="w-full py-6 text-base font-semibold bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 shadow-lg shadow-teal-500/30 transition-all duration-200 hover:shadow-xl hover:shadow-teal-500/40 hover:-translate-y-0.5" 
+                disabled={loading}
+              >
+                {loading ? (
+                  <span className="flex items-center gap-2">
+                    <span className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    Signing in...
+                  </span>
+                ) : (
+                  "Sign In"
+                )}
               </Button>
             </form>
 
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-border" />
+                <span className="w-full border-t border-slate-200 dark:border-slate-700" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
+                <span className="bg-white dark:bg-slate-800 px-2 text-muted-foreground">
+                  New here?
+                </span>
               </div>
             </div>
 
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full"
-              onClick={handleGoogleSignIn}
-              disabled={loading}
-            >
-              <Mail className="mr-2 h-4 w-4" />
-              Sign in with Google
-            </Button>
-
             <p className="text-center text-sm text-muted-foreground">
               {"Don't have an account? "}
-              <Link href="/register" className="font-medium text-primary hover:underline">
-                Sign Up
+              <Link href="/register" className="font-semibold text-teal-600 hover:text-teal-700 dark:text-teal-400 dark:hover:text-teal-300 transition-colors">
+                Create one now →
               </Link>
             </p>
           </CardContent>

@@ -3,11 +3,16 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
 export default async function InstructorReviewDetailPage({ params }) {
-  const { id } = params;
+  const { id } = await params;
 
   const submission = await prisma.vitalReadings.findUnique({
     where: { id },
-    include: { student: true, patient: true }
+    include: { 
+      student: {
+        include: { user: true }
+      },
+      patient: true 
+    }
   });
 
   if (!submission) {
@@ -22,19 +27,20 @@ export default async function InstructorReviewDetailPage({ params }) {
     );
   }
 
+  const mlSuggestion = submission.mlPrediction === 0 ? 'correct' : 'incorrect';
+  const mlConfidence = submission.mlConfidence ? (submission.mlConfidence * 100).toFixed(1) : null;
+  const mlRisk = submission.mlRiskScore ? (submission.mlRiskScore * 100).toFixed(1) : null;
+
   async function publishReview(formData) {
     'use server';
 
     const decision = String(formData.get('decision') || '');
-    const notes = String(formData.get('notes') || '').trim();
-    const grade = decision === 'correct' ? 100 : 0;
+    const isCorrect = decision === 'correct';
 
     await prisma.vitalReadings.update({
       where: { id: String(formData.get('id')) },
       data: {
-        grade,
-        instructorNotes: notes,
-        status: 'REVIEWED'
+        isCorrect: isCorrect
       }
     });
 
@@ -43,31 +49,56 @@ export default async function InstructorReviewDetailPage({ params }) {
 
   return (
     <div style={{ padding: 24, maxWidth: 900 }}>
-      <h1 style={{ fontSize: 22, fontWeight: 700 }}>Review submission</h1>
+      <h1 style={{ fontSize: 22, fontWeight: 700 }}>Review Submission</h1>
 
       <p style={{ marginTop: 6, opacity: 0.8 }}>
-        Status: <b>{submission.status}</b>
+        Status: <b>{submission.isCorrect ? 'Graded' : 'Pending Review'}</b>
       </p>
+
+      {mlConfidence && (
+        <div style={{ 
+          marginTop: 14, 
+          padding: 16, 
+          background: mlSuggestion === 'correct' ? '#d4edda' : '#fff3cd',
+          border: `2px solid ${mlSuggestion === 'correct' ? '#28a745' : '#ffc107'}`,
+          borderRadius: 12
+        }}>
+          <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 8 }}>
+            System Analysis
+          </div>
+          <div style={{ marginBottom: 6 }}>
+            <b>Prediction:</b> {mlSuggestion === 'correct' ? 'Normal vitals' : 'Abnormal vitals detected'}
+          </div>
+          <div style={{ marginBottom: 6 }}>
+            <b>Confidence:</b> {mlConfidence}%
+          </div>
+          {mlRisk && (
+            <div>
+              <b>Risk Score:</b> {mlRisk}%
+            </div>
+          )}
+        </div>
+      )}
 
       <div style={{ marginTop: 14, padding: 14, border: '1px solid #eee', borderRadius: 10 }}>
         <div style={{ marginBottom: 8 }}>
-          <b>Student:</b> {submission.student?.name ?? submission.studentId}
+          <b>Student:</b> {submission.student?.user?.name ?? submission.studentId}
         </div>
         <div style={{ marginBottom: 8 }}>
-          <b>Person:</b> {submission.patient?.name ?? submission.patientId}
+          <b>Patient:</b> {submission.patient?.name ?? submission.patientId}
         </div>
         <div style={{ marginBottom: 8 }}>
-          <b>Created:</b> {new Date(submission.submittedAt).toLocaleString()}
+          <b>Submitted:</b> {new Date(submission.submittedAt).toLocaleString()}
         </div>
 
         <div style={{ marginTop: 10 }}>
-          <b>Vitals</b>
-          <div style={{ marginTop: 6, lineHeight: 1.6 }}>
-            HR: {safe(submission.heartRate)} <br />
-            RR: {safe(submission.respRate)} <br />
-            Temp (F): {safe(submission.tempF)} <br />
-            BP: {safe(submission.systolicBp)}/{safe(submission.diastolicBp)} <br />
-            SpO₂: {safe(submission.spo2Pct)}
+          <b>Vital Signs</b>
+          <div style={{ marginTop: 6, lineHeight: 1.8, fontSize: 15 }}>
+            <div>Heart Rate: <b>{submission.heartRate} bpm</b></div>
+            <div>Respiratory Rate: <b>{submission.respiratoryRate} rpm</b></div>
+            <div>Temperature: <b>{submission.temperature.toString()}°F</b></div>
+            <div>Blood Pressure: <b>{submission.bloodPressureSys}/{submission.bloodPressureDia} mmHg</b></div>
+            <div>Oxygen Saturation: <b>{submission.oxygenSaturation}%</b></div>
           </div>
         </div>
       </div>
@@ -79,11 +110,23 @@ export default async function InstructorReviewDetailPage({ params }) {
           <div style={{ fontWeight: 700, marginBottom: 8 }}>Decision</div>
 
           <label style={{ display: 'block', marginBottom: 6 }}>
-            <input type="radio" name="decision" value="correct" required /> Correct
+            <input 
+              type="radio" 
+              name="decision" 
+              value="correct" 
+              defaultChecked={mlSuggestion === 'correct'}
+              required 
+            /> Correct
           </label>
 
           <label style={{ display: 'block', marginBottom: 12 }}>
-            <input type="radio" name="decision" value="incorrect" required /> Incorrect
+            <input 
+              type="radio" 
+              name="decision" 
+              value="incorrect"
+              defaultChecked={mlSuggestion === 'incorrect'}
+              required 
+            /> Incorrect
           </label>
 
           <div style={{ fontWeight: 700, marginBottom: 8 }}>Instructor notes</div>

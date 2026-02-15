@@ -4,11 +4,11 @@ import joblib
 from fastapi import FastAPI
 
 from ml.predict import get_feature_names, load_metrics, predict_from_json
-from service.schemas import PredictOut, VitalsIn
+from ml.service.schemas import PredictOut, VitalsIn
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 
-app = FastAPI(title="GitVitals ML Service", version="0.1.0")
+app = FastAPI(title="GitVitals Prediction Service", version="0.1.0")
 
 metrics = load_metrics()
 model_path = REPO_ROOT / "ml" / "artifacts" / "model.joblib"

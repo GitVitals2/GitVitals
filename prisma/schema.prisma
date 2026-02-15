@@ -87,6 +87,9 @@ model VitalReadings {
   oxygenSaturation Int       @map("oxygen_saturation")
   submittedAt      DateTime  @default(now()) @map("submitted_at") @db.Timestamptz(6)
   isCorrect        Boolean   @default(false) @map("is_correct")
+  mlPrediction     Int?      @map("ml_prediction")
+  mlRiskScore      Decimal?  @map("ml_risk_score") @db.Decimal
+  mlConfidence     Decimal?  @map("ml_confidence") @db.Decimal
   enteredBy        User      @relation("EnteredByUser", fields: [enteredById], references: [id])
   patient          Patient   @relation(fields: [patientId], references: [id])
   student          Student   @relation(fields: [studentId], references: [id])
