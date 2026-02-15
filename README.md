@@ -144,6 +144,27 @@ Instructor-set correct baseline vitals for classmates (readings 1-25)
 
 ## 🌐 Deployment
 
+### Deploying with Docker Compose
+
+The easiest way to run the full stack (Next.js app, PostgreSQL, ML service):
+
+```bash
+# Create environment file
+cp .env.example .env.local
+# Edit .env.local with your settings
+
+# Train the ML model first
+cd ml && python train.py && cd ..
+
+# Start all services
+docker-compose up -d
+```
+
+This will start:
+- Next.js app on http://localhost:3000
+- PostgreSQL database
+- ML prediction service on http://localhost:8004
+
 ### Deploying to Vercel
 
 1. Push your code to GitHub
@@ -157,12 +178,18 @@ Vercel will automatically:
 - Build the application
 - Deploy to production
 
+**Note**: When deploying to Vercel, you'll need to host the ML service separately (e.g., on AWS, Google Cloud, or a separate container service) and set the `ML_API_URL` environment variable to point to it.
+
 ### Environment Variables for Production
 
-Make sure to set these in your Vercel dashboard:
+Make sure to set these in your Vercel dashboard or `.env.local`:
 - `DATABASE_URL` - Your production PostgreSQL connection string
-- `CANVAS_API_KEY` - Canvas LMS API key (if using)
-- `CANVAS_API_URL` - Canvas LMS API URL (if using)
+- `NEXT_PUBLIC_SUPABASE_URL` - Supabase project URL
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Supabase anonymous key
+- `SUPABASE_SERVICE_ROLE_KEY` - Supabase service role key (server-side only)
+- `ML_API_URL` - URL to your ML prediction service (default: http://localhost:8004/predict)
+- `CANVAS_API_KEY` - Canvas LMS API key (optional)
+- `CANVAS_API_URL` - Canvas LMS API URL (optional)
 
 ## 🎓 Key Features (Planned)
 
@@ -174,6 +201,36 @@ Make sure to set these in your Vercel dashboard:
 - [ ] Canvas LMS integration
 - [ ] Real-time grading feedback
 - [ ] Progress tracking and analytics
+
+## 🤖 Machine Learning Integration
+
+GitVitals includes a FastAPI-based machine learning service for risk prediction based on vital signs.
+
+### Training the Model
+
+Before running the application, you need to train the ML model:
+
+```bash
+cd ml
+python train.py
+```
+
+This generates:
+- `artifacts/model.joblib` - Trained logistic regression model
+- `artifacts/metrics.json` - Model performance metrics
+- `artifacts/eval_report.json` - Detailed evaluation report
+
+The training script uses synthetic data by default. For production, modify `data_loader.py` to load real patient data from your database.
+
+### Running the ML Service
+
+```bash
+cd ml
+pip install -r requirements.txt
+uvicorn service.api:app --host 0.0.0.0 --port 8004
+```
+
+Or use Docker Compose (see Deployment section below).
 
 ## 📝 Development Notes
 
