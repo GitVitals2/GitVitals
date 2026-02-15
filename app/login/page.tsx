@@ -44,9 +44,14 @@ export default function LoginPage() {
         throw new Error(payload?.error || "Unable to sign in. Please try again.")
       }
 
+      const accessToken = payload?.user?.session?.access_token
+      if (accessToken) {
+        localStorage.setItem("gv-token", accessToken)
+      }
+
       const rawRole = payload?.user?.role
       const userRole = typeof rawRole === "string" ? rawRole.toLowerCase() : null
-      
+
       if (userRole === "student" || userRole === "instructor") {
         localStorage.setItem("gv-role", userRole)
       }

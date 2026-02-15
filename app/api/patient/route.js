@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
+import { getCurrentUserFromRequest } from "@/lib/auth";
 
 /**
  * GET /api/patient?cohort={cohort}
@@ -10,6 +11,12 @@ import { NextRequest, NextResponse } from "next/server";
  */
 export async function GET(request) {
   try {
+    const userResponse = await getCurrentUserFromRequest(request);
+
+    if (!userResponse.success) {
+      return NextResponse.json({ message: "User not authenticated." }, { status: 401 });
+    }
+
     const { searchParams } = new URL(request.url);
 
     const cohort = searchParams.get("cohort");
