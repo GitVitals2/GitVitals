@@ -1,50 +1,49 @@
 -- ML Training Data View
 -- Run this in your Supabase SQL Editor to create the training data view
 -- 
--- This view extracts features from VitalReading and uses instructorLabel as the target.
--- Only includes rows where instructorLabel IS NOT NULL (labeled data).
+-- This view extracts features from vital_readings and uses is_correct as the target.
+-- Only includes rows where is_correct IS NOT NULL (labeled data).
 
 CREATE OR REPLACE VIEW ml_training_data AS
 SELECT
   vr.id,
-  vr."studentId",
-  vr."patientId",
-  vr."readingNumber",
+  vr.student_id,
+  vr.patient_id,
+  vr.reading_number,
   
-  -- Core vital sign features (6 features)
-  vr."bloodPressureSystolic" AS bp_systolic,
-  vr."bloodPressureDiastolic" AS bp_diastolic,
-  vr."heartRate" AS heart_rate,
+  -- Core vital sign features
+  vr.blood_pressure_sys AS bp_systolic,
+  vr.blood_pressure_dia AS bp_diastolic,
+  vr.heart_rate,
   CAST(vr.temperature AS FLOAT) AS temperature,
-  vr."respiratoryRate" AS respiratory_rate,
-  vr."oxygenSaturation" AS oxygen_saturation,
+  vr.respiratory_rate,
+  vr.oxygen_saturation,
   
   -- Derived features
-  (vr."bloodPressureSystolic" - vr."bloodPressureDiastolic") AS pulse_pressure,
+  (vr.blood_pressure_sys - vr.blood_pressure_dia) AS pulse_pressure,
   
   -- Optional features (handle nulls)
-  COALESCE(vr."pain0to10", 0) AS pain_level,
+  0 AS pain_level,
   
-  -- Target label (instructorLabel: TRUE = needs recheck/at_risk, FALSE = ok, NULL = unlabeled)
-  -- Convert boolean to 0/1 integer for ML model
+  -- Target label (is_correct: FALSE = needs recheck/at_risk, TRUE = ok, NULL = unlabeled)
+  -- Convert boolean to 0/1 integer for ML model (invert logic)
   CASE 
-    WHEN vr."instructorLabel" IS NULL THEN NULL
-    WHEN vr."instructorLabel" = TRUE THEN 1
+    WHEN vr.is_correct IS NULL THEN NULL
+    WHEN vr.is_correct = FALSE THEN 1
     ELSE 0
   END AS at_risk,
   
-  vr."submittedAt",
-  vr."gradedAt"
+  vr.submitted_at,
+  vr.entered_by_role
   
-FROM "VitalReading" vr
-WHERE vr."instructorLabel" IS NOT NULL  -- Only include labeled data
-ORDER BY vr."submittedAt" DESC;
+FROM vital_readings vr
+WHERE vr.is_correct IS NOT NULL  -- Only include labeled data
+ORDER BY vr.submitted_at DESC;
 
 -- Grant read access to authenticated users
--- Adjust role name based on your Supabase RLS setup
 GRANT SELECT ON ml_training_data TO authenticated;
 
--- Optional: Create index on instructorLabel for faster view queries
-CREATE INDEX IF NOT EXISTS idx_vitalreading_instructor_label 
-ON "VitalReading"("instructorLabel") 
-WHERE "instructorLabel" IS NOT NULL;
+-- Optional: Create index on is_correct for faster view queries
+CREATE INDEX IF NOT EXISTS idx_vitalreading_is_correct 
+ON vital_readings(is_correct) 
+WHERE is_correct IS NOT NULL;
