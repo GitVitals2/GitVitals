@@ -36,11 +36,14 @@ export default async function InstructorReviewDetailPage({ params }) {
 
     const decision = String(formData.get('decision') || '');
     const isCorrect = decision === 'correct';
+    const notes = String(formData.get('notes') || '').trim();
 
     await prisma.vitalReadings.update({
       where: { id: String(formData.get('id')) },
       data: {
-        isCorrect: isCorrect
+        isCorrect: isCorrect,
+        instructorFeedback: notes.length > 0 ? notes : null,
+        gradedAt: new Date()
       }
     });
 
@@ -52,7 +55,7 @@ export default async function InstructorReviewDetailPage({ params }) {
       <h1 style={{ fontSize: 22, fontWeight: 700 }}>Review Submission</h1>
 
       <p style={{ marginTop: 6, opacity: 0.8 }}>
-        Status: <b>{submission.isCorrect ? 'Graded' : 'Pending Review'}</b>
+        Status: <b>{submission.gradedAt ? 'Graded' : 'Pending Review'}</b>
       </p>
 
       {mlConfidence && (
@@ -114,7 +117,7 @@ export default async function InstructorReviewDetailPage({ params }) {
               type="radio" 
               name="decision" 
               value="correct" 
-              defaultChecked={mlSuggestion === 'correct'}
+              defaultChecked={submission.gradedAt ? submission.isCorrect : mlSuggestion === 'correct'}
               required 
             /> Correct
           </label>
@@ -124,7 +127,7 @@ export default async function InstructorReviewDetailPage({ params }) {
               type="radio" 
               name="decision" 
               value="incorrect"
-              defaultChecked={mlSuggestion === 'incorrect'}
+              defaultChecked={submission.gradedAt ? !submission.isCorrect : mlSuggestion === 'incorrect'}
               required 
             /> Incorrect
           </label>
@@ -134,6 +137,7 @@ export default async function InstructorReviewDetailPage({ params }) {
             name="notes"
             rows={5}
             placeholder="Write feedback for the student..."
+            defaultValue={submission.instructorFeedback ?? ''}
             style={{
               width: '100%',
               padding: 10,

@@ -18,7 +18,7 @@ export default async function InstructorReviewsPage() {
     }
   });
 
-  const pending = allSubmissions.filter(s => !s.isCorrect);
+  const pending = allSubmissions.filter(s => !s.gradedAt);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 py-8 px-4">
@@ -182,10 +182,10 @@ export default async function InstructorReviewsPage() {
                         )}
                       </td>
                       <td className="px-6 py-4">
-                        {r.isCorrect ? (
+                        {r.gradedAt ? (
                           <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-lg border border-green-200 dark:border-green-800">
                             <span className="text-lg">✓</span>
-                            <span className="text-xs font-semibold">Correct</span>
+                            <span className="text-xs font-semibold">{r.isCorrect ? 'Correct' : 'Incorrect'}</span>
                           </div>
                         ) : (
                           <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 rounded-lg border border-amber-200 dark:border-amber-800">
@@ -200,7 +200,7 @@ export default async function InstructorReviewsPage() {
                           className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 text-white font-semibold rounded-lg shadow-lg shadow-teal-500/30 transition-all duration-200 hover:shadow-xl hover:shadow-teal-500/40 hover:-translate-y-0.5 text-sm"
                         >
                           <Eye className="h-4 w-4" />
-                          {r.isCorrect ? 'View / Edit' : 'Grade'}
+                          {r.gradedAt ? 'View / Edit' : 'Grade'}
                         </Link>
                       </td>
                     </tr>
