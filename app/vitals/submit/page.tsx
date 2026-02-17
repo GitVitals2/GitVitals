@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import {
   Dialog,
   DialogContent,
@@ -18,48 +19,41 @@ import {
 type Patient = {
   id: string
   name: string
+  age?: number | null
 }
 
 type FormValues = {
-  age_years: string
+  height_ft: string
+  weight_lb: string
+  shoes: string
+  spo2_pct: string
+  temp_f: string
   heart_rate: string
   resp_rate: string
-  temp_f: string
-  spo2_pct: string
-  systolic_bp: string
-  diastolic_bp: string
-  height_ft: string
-  height_in: string
-  weight_lb: string
-  pain_0_10: string
+  blood_pressure: string
 }
 
 const initialValues: FormValues = {
-  age_years: "",
+  height_ft: "",
+  weight_lb: "",
+  shoes: "",
+  spo2_pct: "",
+  temp_f: "",
   heart_rate: "",
   resp_rate: "",
-  temp_f: "",
-  spo2_pct: "",
-  systolic_bp: "",
-  diastolic_bp: "",
-  height_ft: "",
-  height_in: "",
-  weight_lb: "",
-  pain_0_10: "",
+  blood_pressure: "",
 }
 
-const fields: { key: keyof FormValues; label: string; placeholder: string; step?: string; unit?: string }[] = [
-  { key: "age_years", label: "Age", placeholder: "35", unit: "years" },
-  { key: "heart_rate", label: "Heart Rate", placeholder: "72", unit: "bpm" },
-  { key: "resp_rate", label: "Respiratory Rate", placeholder: "16", unit: "rpm" },
-  { key: "temp_f", label: "Temperature", placeholder: "98.6", step: "0.1", unit: "°F" },
-  { key: "spo2_pct", label: "Pulse Oximetry", placeholder: "98", unit: "%" },
-  { key: "pain_0_10", label: "Pain Level", placeholder: "3", unit: "0-10" },
-  { key: "systolic_bp", label: "Systolic BP", placeholder: "120", unit: "mmHg" },
-  { key: "diastolic_bp", label: "Diastolic BP", placeholder: "80", unit: "mmHg" },
-  { key: "height_ft", label: "Height (ft)", placeholder: "5", unit: "ft" },
-  { key: "height_in", label: "Height (in)", placeholder: "10", unit: "in" },
-  { key: "weight_lb", label: "Weight", placeholder: "165", unit: "lb" },
+const vitalFields: { key: keyof FormValues; label: string; placeholder: string; step?: string; unit?: string }[] = [
+  { key: "spo2_pct", label: "SpO2", placeholder: "98", unit: "%" },
+  { key: "temp_f", label: "Temperature", placeholder: "98.6", step: "0.1", unit: "F" },
+  { key: "heart_rate", label: "Pulse", placeholder: "72", unit: "BPM" },
+  { key: "resp_rate", label: "Respiration", placeholder: "16", unit: "RPM" },
+]
+
+const physicalFields: { key: keyof FormValues; label: string; placeholder: string; step?: string; unit?: string }[] = [
+  { key: "height_ft", label: "Height", placeholder: "5.8", step: "0.1", unit: "feet" },
+  { key: "weight_lb", label: "Weight", placeholder: "165", step: "0.1", unit: "lbs" },
 ]
 
 export default function SubmitVitalsPage() {
@@ -105,11 +99,23 @@ export default function SubmitVitalsPage() {
     setFormValues((prev) => ({ ...prev, [key]: e.target.value }))
   }
 
+  const updateSelect = (key: keyof FormValues) => (value: string) => {
+    setFormValues((prev) => ({ ...prev, [key]: value }))
+  }
+
+  const parseBloodPressure = (value: string) => {
+    const parts = value.split("/").map((part) => Number(part.trim()))
+    if (parts.length !== 2 || parts.some((part) => Number.isNaN(part) || part <= 0)) {
+      return null
+    }
+    return { systolic: parts[0], diastolic: parts[1] }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (!searchTerm || searchTerm.trim().length === 0) {
-      alert('Please enter a patient name')
+    if (!selectedPatient) {
+      alert('Please select a patient from the list')
       return
     }
 
@@ -119,12 +125,40 @@ export default function SubmitVitalsPage() {
       return
     }
 
+    if (!formValues.shoes) {
+      alert('Please select whether the patient is wearing shoes')
+      return
+    }
+
+    const bloodPressure = parseBloodPressure(formValues.blood_pressure)
+    if (!bloodPressure) {
+      alert('Please enter blood pressure in the format 120/80')
+      return
+    }
+
+    const heightValue = Number(formValues.height_ft)
+    if (Number.isNaN(heightValue) || heightValue <= 0) {
+      alert('Please enter a valid height in feet')
+      return
+    }
+
+    const heightFeet = Math.floor(heightValue)
+    const heightInches = Math.round((heightValue - heightFeet) * 12)
+
     const payload = {
       userEmail,
-      patientName: searchTerm.trim(),
-      ...Object.fromEntries(
-        Object.entries(formValues).map(([k, v]) => [k, Number(v)])
-      )
+      patientName: selectedPatient.name,
+      age_years: Number(selectedPatient.age ?? 0),
+      heart_rate: Number(formValues.heart_rate),
+      resp_rate: Number(formValues.resp_rate),
+      temp_f: Number(formValues.temp_f),
+      spo2_pct: Number(formValues.spo2_pct),
+      systolic_bp: bloodPressure.systolic,
+      diastolic_bp: bloodPressure.diastolic,
+      height_ft: heightFeet,
+      height_in: heightInches,
+      weight_lb: Number(formValues.weight_lb),
+      pain_0_10: 0,
     }
 
     try {
@@ -230,7 +264,7 @@ export default function SubmitVitalsPage() {
           </CardHeader>
           <CardContent>
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {fields.map((field) => (
+              {physicalFields.map((field) => (
                 <div key={field.key} className="flex flex-col gap-2">
                   <Label htmlFor={field.key} className="text-sm font-semibold text-foreground">
                     {field.label}
@@ -248,6 +282,53 @@ export default function SubmitVitalsPage() {
                   />
                 </div>
               ))}
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="shoes" className="text-sm font-semibold text-foreground">
+                  Wearing Shoes
+                </Label>
+                <Select value={formValues.shoes} onValueChange={updateSelect("shoes")}
+                >
+                  <SelectTrigger id="shoes" className="h-12 border-2 border-slate-200 dark:border-slate-700 rounded-lg">
+                    <SelectValue placeholder="Select..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="with">With shoes</SelectItem>
+                    <SelectItem value="without">Without shoes</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              {vitalFields.map((field) => (
+                <div key={field.key} className="flex flex-col gap-2">
+                  <Label htmlFor={field.key} className="text-sm font-semibold text-foreground">
+                    {field.label}
+                    {field.unit && <span className="ml-1.5 text-muted-foreground font-medium">({field.unit})</span>}
+                  </Label>
+                  <Input
+                    id={field.key}
+                    type="number"
+                    step={field.step}
+                    required
+                    placeholder={field.placeholder}
+                    value={formValues[field.key]}
+                    onChange={updateField(field.key)}
+                    className="transition-all py-3 text-base border-2 border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                  />
+                </div>
+              ))}
+            </div>
+            <div className="mt-5 flex flex-col gap-2">
+              <Label htmlFor="blood_pressure" className="text-sm font-semibold text-foreground">
+                Blood Pressure (mmHg)
+              </Label>
+              <Input
+                id="blood_pressure"
+                type="text"
+                required
+                placeholder="120/80"
+                value={formValues.blood_pressure}
+                onChange={updateField("blood_pressure")}
+                className="transition-all py-3 text-base border-2 border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+              />
             </div>
           </CardContent>
         </Card>
