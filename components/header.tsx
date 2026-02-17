@@ -1,5 +1,5 @@
 "use client"
-import { useRouter } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -9,7 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Menu, Home, Users, BookOpen, BarChart3, Settings, Activity } from "lucide-react"
+import { Menu, Home, Activity } from "lucide-react"
 
 /**
  * Header Component for GitVitals
@@ -23,15 +23,17 @@ import { Menu, Home, Users, BookOpen, BarChart3, Settings, Activity } from "luci
  *   <Header />
  */
 export function Header() {
+  const pathname = usePathname()
   const router = useRouter()
+  const hiddenRoutes = new Set(["/login", "/register", "/signup", "/forgot-password"])
+
+  if (hiddenRoutes.has(pathname)) {
+    return null
+  }
 
   // Navigation menu items - customize these based on your routes
   const menuItems = [
     { label: "Dashboard", icon: Home, href: "/dashboard" },
-    { label: "Instructor Panel", icon: Users, href: "/instructor" },
-    { label: "Student Panel", icon: BookOpen, href: "/student" },
-    { label: "Analytics", icon: BarChart3, href: "/analytics" },
-    { label: "Settings", icon: Settings, href: "/settings" },
   ]
 
   return (

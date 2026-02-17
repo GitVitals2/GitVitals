@@ -168,7 +168,7 @@ export default function SubmitVitalsPage() {
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-6">
         {/* Patient Search */}
-        <Card className="border-border shadow-2xl shadow-slate-200/50 dark:shadow-slate-900/50 transition-all hover:shadow-3xl backdrop-blur-sm bg-white/80 dark:bg-slate-800/80 animate-in fade-in slide-in-from-bottom-8 duration-700">
+        <Card className="relative z-20 border-border shadow-2xl shadow-slate-200/50 dark:shadow-slate-900/50 transition-all hover:shadow-3xl backdrop-blur-sm bg-white/80 dark:bg-slate-800/80 animate-in fade-in slide-in-from-bottom-8 duration-700">
           <CardHeader className="pb-4">
             <CardTitle className="flex items-center gap-2 text-xl text-foreground font-bold">
               <Search className="h-6 w-6 text-teal-600" />
@@ -193,7 +193,7 @@ export default function SubmitVitalsPage() {
                 />
               </div>
               {filteredPatients.length > 0 && (
-                <div className="absolute left-0 right-0 top-full z-10 mt-2 overflow-hidden rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-2xl animate-in fade-in slide-in-from-top-2">
+                <div className="absolute left-0 right-0 top-full z-50 mt-2 overflow-hidden rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-2xl animate-in fade-in slide-in-from-top-2">
                   {filteredPatients.map((p) => (
                     <button
                       key={p.id}
