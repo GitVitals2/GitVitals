@@ -1,9 +1,11 @@
 import React from "react"
-import type { Metadata, Viewport } from 'next'
-import { Inter } from 'next/font/google'
+import type { Metadata, Viewport } from "next"
+import { Inter } from "next/font/google"
 import { Header } from "@/components/header"
 
-import './globals.css'
+import "./globals.css"
+
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
 
 export const metadata: Metadata = {
   title: 'GitVitals - Clinical Management System',
@@ -27,7 +29,6 @@ export default function RootLayout({
         <Header />
         {children}
       </body>
-      <body className="font-sans antialiased">{children}</body>
     </html>
   )
 }

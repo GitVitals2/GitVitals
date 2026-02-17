@@ -1,6 +1,4 @@
 "use client"
-
-import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import {
@@ -64,7 +62,7 @@ export function Header() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuLabel>Navegação</DropdownMenuLabel>
+            <DropdownMenuLabel>Navigation</DropdownMenuLabel>
             <DropdownMenuSeparator />
             
             {/* Menu Items */}
