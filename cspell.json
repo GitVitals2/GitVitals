@@ -11,6 +11,7 @@
     "fastapi",
     "heart_rate",
     "joblib",
+    "jordanmontenegro",
     "kalman",
     "ml",
     "ml_training_data",
@@ -21,11 +22,13 @@
     "psql",
     "psycopg",
     "pulse_pressure",
+    "PYTHONPATH",
     "quickselect",
     "respiratory_rate",
     "Supabase",
     "SUPABASE",
     "Timestamptz",
+    "uvicorn",
     "venv"
   ]
 }

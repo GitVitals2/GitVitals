@@ -28,8 +28,8 @@ class VitalsIn(BaseModel):
 
 
 class PredictOut(BaseModel):
-    p_flag: float
-    pred_flag: int
+    risk_probability: float
+    pred: int
     threshold: float
     reasons: List[str]
     model_version: str

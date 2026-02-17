@@ -38,8 +38,8 @@ def predict(v: VitalsIn):
 
     result = predict_from_json(model, payload, feature_names, threshold, metrics)
     return PredictOut(
-        p_flag=result["risk_probability"],
-        pred_flag=result["pred"],
+        risk_probability=result["risk_probability"],
+        pred=result["pred"],
         threshold=result["threshold"],
         reasons=["Risk probability compared to threshold"],
         model_version="0.1.0",
