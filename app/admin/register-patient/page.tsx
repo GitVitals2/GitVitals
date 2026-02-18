@@ -402,6 +402,7 @@ export default function RegisterPatientPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      </div>
     </div>
   );
 }
