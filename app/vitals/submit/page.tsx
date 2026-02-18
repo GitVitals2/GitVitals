@@ -234,11 +234,11 @@ export default function SubmitVitalsPage() {
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-[400px] p-0" align="start">
-                  <Command>
-                    <CommandInput placeholder="Search patient name..." />
+                <PopoverContent className="w-[400px] p-0 bg-background" align="start">
+                  <Command className="rounded-lg border shadow-md bg-background">
+                    <CommandInput placeholder="Search patient name..." className="h-12 text-foreground" />
                     <CommandList>
-                      <CommandEmpty>No patient found.</CommandEmpty>
+                      <CommandEmpty className="text-foreground">No patient found.</CommandEmpty>
                       <CommandGroup>
                         {allPatients.map((patient) => (
                           <CommandItem
@@ -248,14 +248,19 @@ export default function SubmitVitalsPage() {
                               setSelectedPatient(patient)
                               setOpen(false)
                             }}
+                            onClick={() => {
+                              setSelectedPatient(patient)
+                              setOpen(false)
+                            }}
+                            className="cursor-pointer py-3 px-3 text-base font-medium text-foreground hover:bg-accent/50 aria-selected:bg-accent data-[selected]:bg-accent"
                           >
                             <Check
                               className={cn(
-                                "mr-2 h-4 w-4",
+                                "mr-2 h-4 w-4 text-primary",
                                 selectedPatient?.id === patient.id ? "opacity-100" : "opacity-0"
                               )}
                             />
-                            {patient.name}
+                            <span className="text-foreground font-medium">{patient.name}</span>
                           </CommandItem>
                         ))}
                       </CommandGroup>
