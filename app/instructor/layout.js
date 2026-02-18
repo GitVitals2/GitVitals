@@ -6,3 +6,4 @@ export const metadata = {
 export default function InstructorLayout({ children }) {
   return children;
 }
+

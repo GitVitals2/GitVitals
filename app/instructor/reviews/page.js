@@ -21,11 +21,11 @@ export default async function InstructorReviewsPage() {
   const pending = allSubmissions.filter(s => !s.gradedAt);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 py-8 px-4">
+    <div className="min-h-screen bg-background py-8 px-4">
       <div className="mx-auto max-w-7xl">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent mb-2">
+          <h1 className="text-4xl font-bold text-primary mb-2">
             Student Submissions
           </h1>
           <p className="text-muted-foreground text-lg">
@@ -35,9 +35,9 @@ export default async function InstructorReviewsPage() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl shadow-slate-200/50 dark:shadow-slate-900/50 p-6 border border-slate-200 dark:border-slate-700">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-md p-6 border border-slate-200 dark:border-slate-700">
             <div className="flex items-center gap-4">
-              <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg">
+              <div className="h-12 w-12 rounded-xl bg-primary flex items-center justify-center shadow-md">
                 <FileText className="h-6 w-6 text-white" />
               </div>
               <div>
@@ -47,9 +47,9 @@ export default async function InstructorReviewsPage() {
             </div>
           </div>
           
-          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl shadow-slate-200/50 dark:shadow-slate-900/50 p-6 border border-slate-200 dark:border-slate-700">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-md p-6 border border-slate-200 dark:border-slate-700">
             <div className="flex items-center gap-4">
-              <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg">
+              <div className="h-12 w-12 rounded-xl bg-accent flex items-center justify-center shadow-md">
                 <Clock className="h-6 w-6 text-white" />
               </div>
               <div>
@@ -59,9 +59,9 @@ export default async function InstructorReviewsPage() {
             </div>
           </div>
 
-          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl shadow-slate-200/50 dark:shadow-slate-900/50 p-6 border border-slate-200 dark:border-slate-700">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-md p-6 border border-slate-200 dark:border-slate-700">
             <div className="flex items-center gap-4">
-              <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center shadow-lg">
+              <div className="h-12 w-12 rounded-xl bg-accent flex items-center justify-center shadow-md">
                 <User className="h-6 w-6 text-white" />
               </div>
               <div>
@@ -73,11 +73,11 @@ export default async function InstructorReviewsPage() {
         </div>
 
         {/* Table Card */}
-        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl shadow-slate-200/50 dark:shadow-slate-900/50 border border-slate-200 dark:border-slate-700 overflow-hidden">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-md border border-slate-200 dark:border-slate-700 overflow-hidden">
           {allSubmissions.length === 0 ? (
             /* Empty State */
             <div className="py-16 px-6 text-center">
-              <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-600 mb-6">
+              <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-muted mb-6">
                 <FileText className="h-10 w-10 text-slate-400 dark:text-slate-300" />
               </div>
               <h3 className="text-2xl font-bold text-foreground mb-2">No Submissions Yet</h3>
@@ -90,7 +90,7 @@ export default async function InstructorReviewsPage() {
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="bg-gradient-to-r from-teal-500 to-cyan-600 text-white">
+                  <tr className="bg-primary text-white">
                     <th className="text-left px-6 py-4 text-sm font-bold">
                       <div className="flex items-center gap-2">
                         <Clock className="h-4 w-4" />
@@ -204,7 +204,7 @@ export default async function InstructorReviewsPage() {
                       <td className="px-6 py-4">
                         <Link 
                           href={`/instructor/reviews/${r.id}`}
-                          className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 text-white font-semibold rounded-lg shadow-lg shadow-teal-500/30 transition-all duration-200 hover:shadow-xl hover:shadow-teal-500/40 hover:-translate-y-0.5 text-sm"
+                          className="inline-flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary/90 text-white font-semibold rounded-lg shadow-md transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 text-sm"
                         >
                           <Eye className="h-4 w-4" />
                           {r.gradedAt ? 'View / Edit' : 'Grade'}
@@ -222,7 +222,7 @@ export default async function InstructorReviewsPage() {
         <div className="mt-6">
           <Link 
             href="/dashboard" 
-            className="inline-flex items-center gap-2 text-teal-600 hover:text-teal-700 dark:text-teal-400 dark:hover:text-teal-300 font-medium transition-colors"
+            className="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-medium transition-colors"
           >
             ← Back to Dashboard
           </Link>
@@ -231,3 +231,4 @@ export default async function InstructorReviewsPage() {
     </div>
   );
 }
+

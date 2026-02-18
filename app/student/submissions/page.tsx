@@ -65,7 +65,7 @@ export default function StudentSubmissionsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 py-8 px-4 flex items-center justify-center">
+      <div className="min-h-screen bg-background py-8 px-4 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto mb-4"></div>
           <p className="text-muted-foreground">Loading submissions...</p>
@@ -75,10 +75,10 @@ export default function StudentSubmissionsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 py-8 px-4">
+    <div className="min-h-screen bg-background py-8 px-4">
       <div className="mx-auto max-w-7xl">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent mb-2">
+          <h1 className="text-4xl font-bold text-primary mb-2">
             My Submissions
           </h1>
           <p className="text-muted-foreground text-lg">
@@ -96,7 +96,7 @@ export default function StudentSubmissionsPage() {
               </p>
               <Link 
                 href="/vitals/submit"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-teal-500 to-cyan-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-xl font-semibold hover:shadow-lg transition-all"
               >
                 Submit Vitals
               </Link>
@@ -104,7 +104,7 @@ export default function StudentSubmissionsPage() {
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gradient-to-r from-teal-500 to-cyan-600">
+                <thead className="bg-primary">
                   <tr>
                     <th className="px-6 py-4 text-left text-sm font-semibold text-white">Patient</th>
                     <th className="px-6 py-4 text-left text-sm font-semibold text-white">Submitted</th>

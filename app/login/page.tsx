@@ -68,14 +68,14 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 p-4">
+    <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="mb-8 flex flex-col items-center gap-3 animate-in fade-in slide-in-from-bottom-4 duration-700">
-          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-500 to-cyan-600 shadow-lg shadow-teal-500/30">
+          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary shadow-md">
             <Activity className="h-8 w-8 text-white animate-pulse" />
           </div>
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent">GitVitals</h1>
+          <h1 className="text-2xl font-bold text-primary">GitVitals</h1>
           <p className="text-sm text-muted-foreground font-medium">Clinical Management System</p>
         </div>
 
@@ -141,7 +141,7 @@ export default function LoginPage() {
 
               <Button 
                 type="submit" 
-                className="w-full py-6 text-base font-semibold bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 shadow-lg shadow-teal-500/30 transition-all duration-200 hover:shadow-xl hover:shadow-teal-500/40 hover:-translate-y-0.5" 
+                className="w-full py-6 text-base font-semibold bg-primary hover:bg-primary/90 shadow-md transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5" 
                 disabled={loading}
               >
                 {loading ? (

@@ -47,3 +47,4 @@ export async function GET(request) {
     return NextResponse.json({ message: "Error fetching students.", error }, { status: 500 });
   }
 }
+

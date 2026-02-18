@@ -242,7 +242,7 @@ export default function SubmitVitalsPage() {
                 </div>
               )}
               {selectedPatient && (
-                <div className="mt-4 flex items-center gap-3 rounded-xl bg-gradient-to-r from-teal-50 to-cyan-50 dark:from-teal-900/20 dark:to-cyan-900/20 border-2 border-teal-200 dark:border-teal-800 px-5 py-4 shadow-lg shadow-teal-500/10">
+                <div className="mt-4 flex items-center gap-3 rounded-xl bg-accent/10 border-2 border-accent/30 px-5 py-4 shadow-md">
                   <CheckCircle2 className="h-6 w-6 text-teal-600 flex-shrink-0" />
                   <p className="text-base font-bold text-teal-700 dark:text-teal-300">
                     Selected: {selectedPatient.name}
@@ -336,7 +336,7 @@ export default function SubmitVitalsPage() {
         <Button
           type="submit"
           size="lg"
-          className="w-full py-6 text-lg font-bold bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 shadow-xl shadow-teal-500/30 transition-all duration-200 hover:shadow-2xl hover:shadow-teal-500/40 hover:-translate-y-1 rounded-xl sm:w-auto sm:self-end"
+          className="w-full py-6 text-lg font-bold bg-primary hover:bg-primary/90 shadow-md transition-all duration-200 hover:shadow-lg hover:-translate-y-1 rounded-xl sm:w-auto sm:self-end"
         >
           <Activity className="mr-2 h-6 w-6" />
           Submit & Analyze Vitals
@@ -347,7 +347,7 @@ export default function SubmitVitalsPage() {
       <Dialog open={showModal} onOpenChange={setShowModal}>
         <DialogContent className="sm:max-w-md backdrop-blur-sm bg-white/95 dark:bg-slate-800/95 border-2">
           <DialogHeader className="items-center text-center">
-            <div className="mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-teal-500 to-cyan-600 shadow-lg shadow-teal-500/30">
+            <div className="mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-accent shadow-md">
               <CheckCircle2 className="h-9 w-9 text-white animate-pulse" />
             </div>
             <DialogTitle className="text-2xl font-bold">Submission Complete</DialogTitle>
@@ -382,7 +382,7 @@ export default function SubmitVitalsPage() {
           <DialogFooter>
             <Button 
               onClick={() => setShowModal(false)} 
-              className="w-full py-3 text-base font-semibold bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 shadow-lg shadow-teal-500/30"
+              className="w-full py-3 text-base font-semibold bg-primary hover:bg-primary/90 shadow-md"
             >
               Close
             </Button>

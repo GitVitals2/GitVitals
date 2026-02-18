@@ -51,7 +51,7 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 py-8 px-4 flex items-center justify-center">
+      <div className="min-h-screen bg-background py-8 px-4 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto mb-4"></div>
           <p className="text-muted-foreground">Loading dashboard...</p>
@@ -63,11 +63,11 @@ export default function DashboardPage() {
   const isInstructor = role === 'instructor';
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 py-8 px-4">
+    <div className="min-h-screen bg-background py-8 px-4">
       <div className="mx-auto max-w-7xl">
         {/* Page header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent mb-2">
+          <h1 className="text-4xl font-bold text-primary mb-2">
             {isInstructor ? 'Instructor Dashboard' : 'Student Dashboard'}
           </h1>
           <p className="text-muted-foreground text-lg">
@@ -79,9 +79,9 @@ export default function DashboardPage() {
 
         {/* Stats grid */}
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-8">
-          <Card className="border-border shadow-xl shadow-slate-200/50 dark:shadow-slate-900/50 backdrop-blur-sm bg-white/80 dark:bg-slate-800/80">
+          <Card className="border-border shadow-md hover:shadow-lg transition-shadow">
             <CardContent className="flex items-start gap-4 p-6">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-teal-500 to-cyan-600 shadow-lg shadow-teal-500/30">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary shadow-md">
                 <FileCheck className="h-6 w-6 text-white" />
               </div>
               <div className="flex-1">
@@ -94,9 +94,9 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="border-border shadow-xl shadow-slate-200/50 dark:shadow-slate-900/50 backdrop-blur-sm bg-white/80 dark:bg-slate-800/80">
+          <Card className="border-border shadow-md hover:shadow-lg transition-shadow">
             <CardContent className="flex items-start gap-4 p-6">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 shadow-lg shadow-amber-500/30">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-accent shadow-md">
                 <Clock className="h-6 w-6 text-white" />
               </div>
               <div className="flex-1">
@@ -111,9 +111,9 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="border-border shadow-xl shadow-slate-200/50 dark:shadow-slate-900/50 backdrop-blur-sm bg-white/80 dark:bg-slate-800/80">
+          <Card className="border-border shadow-md hover:shadow-lg transition-shadow">
             <CardContent className="flex items-start gap-4 p-6">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-green-500 to-emerald-600 shadow-lg shadow-green-500/30">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-accent shadow-md">
                 <TrendingUp className="h-6 w-6 text-white" />
               </div>
               <div className="flex-1">
@@ -126,9 +126,9 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="border-border shadow-xl shadow-slate-200/50 dark:shadow-slate-900/50 backdrop-blur-sm bg-white/80 dark:bg-slate-800/80">
+          <Card className="border-border shadow-md">
             <CardContent className="flex items-start gap-4 p-6">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 shadow-lg shadow-blue-500/30">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary shadow-md">
                 <Users className="h-6 w-6 text-white" />
               </div>
               <div className="flex-1">
@@ -147,10 +147,10 @@ export default function DashboardPage() {
             {isInstructor ? (
               <>
                 <Link href="/instructor/reviews">
-                  <Card className="border-border shadow-xl shadow-slate-200/50 dark:shadow-slate-900/50 backdrop-blur-sm bg-white/80 dark:bg-slate-800/80 hover:shadow-2xl hover:-translate-y-1 transition-all duration-200 cursor-pointer">
+                  <Card className="border-border shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-200 cursor-pointer">
                     <CardHeader>
                       <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-purple-500 to-pink-600">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
                           <GraduationCap className="h-5 w-5 text-white" />
                         </div>
                         <CardTitle className="text-lg">Review Submissions</CardTitle>
@@ -162,10 +162,10 @@ export default function DashboardPage() {
                   </Card>
                 </Link>
                 <Link href="/admin/register-patient">
-                  <Card className="border-border shadow-xl shadow-slate-200/50 dark:shadow-slate-900/50 backdrop-blur-sm bg-white/80 dark:bg-slate-800/80 hover:shadow-2xl hover:-translate-y-1 transition-all duration-200 cursor-pointer">
+                  <Card className="border-border shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-200 cursor-pointer">
                     <CardHeader>
                       <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
                           <UserPlus className="h-5 w-5 text-white" />
                         </div>
                         <CardTitle className="text-lg">Register Patient</CardTitle>
@@ -180,10 +180,10 @@ export default function DashboardPage() {
             ) : (
               <>
                 <Link href="/vitals/submit">
-                  <Card className="border-border shadow-xl shadow-slate-200/50 dark:shadow-slate-900/50 backdrop-blur-sm bg-white/80 dark:bg-slate-800/80 hover:shadow-2xl hover:-translate-y-1 transition-all duration-200 cursor-pointer">
+                  <Card className="border-border shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-200 cursor-pointer">
                     <CardHeader>
                       <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-teal-500 to-cyan-600">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent">
                           <HeartPulse className="h-5 w-5 text-white" />
                         </div>
                         <CardTitle className="text-lg">Submit Vitals</CardTitle>
@@ -195,10 +195,10 @@ export default function DashboardPage() {
                   </Card>
                 </Link>
                 <Link href="/student/submissions">
-                  <Card className="border-border shadow-xl shadow-slate-200/50 dark:shadow-slate-900/50 backdrop-blur-sm bg-white/80 dark:bg-slate-800/80 hover:shadow-2xl hover:-translate-y-1 transition-all duration-200 cursor-pointer">
+                  <Card className="border-border shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-200 cursor-pointer">
                     <CardHeader>
                       <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
                           <FileCheck className="h-5 w-5 text-white" />
                         </div>
                         <CardTitle className="text-lg">View My Submissions</CardTitle>
@@ -217,7 +217,7 @@ export default function DashboardPage() {
         {/* Recent Activity */}
         <div>
           <h2 className="text-2xl font-bold text-foreground mb-4">Recent Activity</h2>
-          <Card className="border-border shadow-xl shadow-slate-200/50 dark:shadow-slate-900/50 backdrop-blur-sm bg-white/80 dark:bg-slate-800/80">
+          <Card className="border-border shadow-md">
             <CardHeader>
               <CardTitle className="text-lg">Activity Log</CardTitle>
               <CardDescription>

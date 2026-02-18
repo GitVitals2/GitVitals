@@ -62,3 +62,4 @@ async function saveDataToDatabase(data, userId) {
     }
   });
 }
+
