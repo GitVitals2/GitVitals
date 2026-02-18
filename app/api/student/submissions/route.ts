@@ -12,15 +12,10 @@ export async function POST(request: Request) {
       );
     }
 
-    console.log('Fetching submissions for:', userEmail);
-
     const user = await prisma.user.findUnique({
       where: { email: userEmail },
       include: { students: true }
     });
-
-    console.log('User found:', user ? 'Yes' : 'No');
-    console.log('Student record:', user?.students ? 'Yes' : 'No');
 
     if (!user || !user.students) {
       return NextResponse.json(
@@ -28,8 +23,6 @@ export async function POST(request: Request) {
         { status: 404 }
       );
     }
-
-    console.log('Querying submissions for studentId:', user.students.id);
 
     const submissions = await prisma.vitalReadings.findMany({
       where: {
@@ -60,11 +53,6 @@ export async function POST(request: Request) {
         submittedAt: 'desc'
       }
     });
-
-    console.log('Submissions found:', submissions.length);
-    if (submissions.length > 0) {
-      console.log('All submissions:', JSON.stringify(submissions, null, 2));
-    }
 
     return NextResponse.json({ submissions });
   } catch (error) {

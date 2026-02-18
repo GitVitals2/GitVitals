@@ -66,7 +66,7 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 py-8 px-4">
       <div className="mx-auto max-w-7xl">
         {/* Page header */}
-        <div className="mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <div className="mb-8">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent mb-2">
             {isInstructor ? 'Instructor Dashboard' : 'Student Dashboard'}
           </h1>
@@ -79,7 +79,7 @@ export default function DashboardPage() {
 
         {/* Stats grid */}
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-8">
-          <Card className="border-border shadow-xl shadow-slate-200/50 dark:shadow-slate-900/50 backdrop-blur-sm bg-white/80 dark:bg-slate-800/80 animate-in fade-in slide-in-from-bottom-8 duration-700">
+          <Card className="border-border shadow-xl shadow-slate-200/50 dark:shadow-slate-900/50 backdrop-blur-sm bg-white/80 dark:bg-slate-800/80">
             <CardContent className="flex items-start gap-4 p-6">
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-teal-500 to-cyan-600 shadow-lg shadow-teal-500/30">
                 <FileCheck className="h-6 w-6 text-white" />
@@ -94,7 +94,7 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="border-border shadow-xl shadow-slate-200/50 dark:shadow-slate-900/50 backdrop-blur-sm bg-white/80 dark:bg-slate-800/80 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-75">
+          <Card className="border-border shadow-xl shadow-slate-200/50 dark:shadow-slate-900/50 backdrop-blur-sm bg-white/80 dark:bg-slate-800/80">
             <CardContent className="flex items-start gap-4 p-6">
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 shadow-lg shadow-amber-500/30">
                 <Clock className="h-6 w-6 text-white" />
@@ -111,7 +111,7 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="border-border shadow-xl shadow-slate-200/50 dark:shadow-slate-900/50 backdrop-blur-sm bg-white/80 dark:bg-slate-800/80 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-150">
+          <Card className="border-border shadow-xl shadow-slate-200/50 dark:shadow-slate-900/50 backdrop-blur-sm bg-white/80 dark:bg-slate-800/80">
             <CardContent className="flex items-start gap-4 p-6">
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-green-500 to-emerald-600 shadow-lg shadow-green-500/30">
                 <TrendingUp className="h-6 w-6 text-white" />
@@ -126,7 +126,7 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="border-border shadow-xl shadow-slate-200/50 dark:shadow-slate-900/50 backdrop-blur-sm bg-white/80 dark:bg-slate-800/80 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
+          <Card className="border-border shadow-xl shadow-slate-200/50 dark:shadow-slate-900/50 backdrop-blur-sm bg-white/80 dark:bg-slate-800/80">
             <CardContent className="flex items-start gap-4 p-6">
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 shadow-lg shadow-blue-500/30">
                 <Users className="h-6 w-6 text-white" />

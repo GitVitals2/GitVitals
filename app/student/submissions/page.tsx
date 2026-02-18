@@ -44,24 +44,17 @@ export default function StudentSubmissionsPage() {
         });
 
         const data = await response.json();
-        console.log('Submissions API response:', data);
 
         if (!response.ok) {
           console.error('Error from API:', data.error);
-          alert(`Error: ${data.error}`);
           return;
         }
 
         if (data.submissions) {
-          console.log('Submissions count:', data.submissions.length);
-          console.log('First submission:', data.submissions[0]);
-          console.log('gradedAt:', data.submissions[0]?.gradedAt);
-          console.log('isCorrect:', data.submissions[0]?.isCorrect);
           setSubmissions(data.submissions);
         }
       } catch (error) {
         console.error('Error fetching submissions:', error);
-        alert('Failed to load submissions. Check console for details.');
       } finally {
         setLoading(false);
       }
@@ -84,7 +77,7 @@ export default function StudentSubmissionsPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 py-8 px-4">
       <div className="mx-auto max-w-7xl">
-        <div className="mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <div className="mb-8">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent mb-2">
             My Submissions
           </h1>

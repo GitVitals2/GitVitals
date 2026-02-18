@@ -24,7 +24,7 @@ export default async function InstructorReviewsPage() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 py-8 px-4">
       <div className="mx-auto max-w-7xl">
         {/* Header */}
-        <div className="mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <div className="mb-8">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent mb-2">
             Student Submissions
           </h1>
@@ -73,7 +73,7 @@ export default async function InstructorReviewsPage() {
         </div>
 
         {/* Table Card */}
-        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl shadow-slate-200/50 dark:shadow-slate-900/50 border border-slate-200 dark:border-slate-700 overflow-hidden animate-in fade-in slide-in-from-bottom-8 duration-700 delay-100">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl shadow-slate-200/50 dark:shadow-slate-900/50 border border-slate-200 dark:border-slate-700 overflow-hidden">
           {allSubmissions.length === 0 ? (
             /* Empty State */
             <div className="py-16 px-6 text-center">
