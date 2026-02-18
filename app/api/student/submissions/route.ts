@@ -44,6 +44,9 @@ export async function POST(request: Request) {
     });
 
     console.log('Submissions found:', submissions.length);
+    if (submissions.length > 0) {
+      console.log('First submission sample:', JSON.stringify(submissions[0], null, 2));
+    }
 
     return NextResponse.json({ submissions });
   } catch (error) {
