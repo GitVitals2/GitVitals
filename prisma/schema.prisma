@@ -87,6 +87,8 @@ model VitalReadings {
   oxygenSaturation Int       @map("oxygen_saturation")
   submittedAt      DateTime  @default(now()) @map("submitted_at") @db.Timestamptz(6)
   isCorrect        Boolean   @default(false) @map("is_correct")
+  gradedAt         DateTime? @map("graded_at") @db.Timestamptz(6)
+  instructorFeedback String? @map("instructor_feedback")
   mlPrediction     Int?      @map("ml_prediction")
   mlRiskScore      Decimal?  @map("ml_risk_score") @db.Decimal
   mlConfidence     Decimal?  @map("ml_confidence") @db.Decimal
