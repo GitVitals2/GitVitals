@@ -43,12 +43,22 @@ export default function StudentSubmissionsPage() {
           body: JSON.stringify({ userEmail })
         });
 
-        if (response.ok) {
-          const data = await response.json();
-          setSubmissions(data.submissions || []);
+        const data = await response.json();
+        console.log('Submissions API response:', data);
+
+        if (!response.ok) {
+          console.error('Error from API:', data.error);
+          alert(`Error: ${data.error}`);
+          return;
+        }
+
+        if (data.submissions) {
+          console.log('Submissions count:', data.submissions.length);
+          setSubmissions(data.submissions);
         }
       } catch (error) {
         console.error('Error fetching submissions:', error);
+        alert('Failed to load submissions. Check console for details.');
       } finally {
         setLoading(false);
       }
