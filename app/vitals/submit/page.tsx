@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { Search, CheckCircle2, AlertTriangle, Activity } from "lucide-react"
+import { CheckCircle2, AlertTriangle, Activity, ChevronsUpDown, Check, User } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -15,6 +15,20 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command"
+import { cn } from "@/lib/utils"
 
 type Patient = {
   id: string
@@ -57,8 +71,7 @@ const physicalFields: { key: keyof FormValues; label: string; placeholder: strin
 ]
 
 export default function SubmitVitalsPage() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [filteredPatients, setFilteredPatients] = useState<Patient[]>([])
+  const [open, setOpen] = useState(false)
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null)
   const [showModal, setShowModal] = useState(false)
   const [prediction, setPrediction] = useState<{ pred_flag: number; p_flag: number } | null>(null)
@@ -79,21 +92,6 @@ export default function SubmitVitalsPage() {
     }
     loadPatients()
   }, [])
-
-  const handleSearch = (value: string) => {
-    setSearchTerm(value)
-    if (value.length > 0) {
-      setFilteredPatients(allPatients.filter((p) => p.name.toLowerCase().includes(value.toLowerCase())))
-    } else {
-      setFilteredPatients([])
-    }
-  }
-
-  const selectPatient = (p: Patient) => {
-    setSelectedPatient(p)
-    setSearchTerm(p.name)
-    setFilteredPatients([])
-  }
 
   const updateField = (key: keyof FormValues) => (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormValues((prev) => ({ ...prev, [key]: e.target.value }))
@@ -180,7 +178,6 @@ export default function SubmitVitalsPage() {
       setShowModal(true)
       
       setFormValues(initialValues)
-      setSearchTerm('')
       setSelectedPatient(null)
     } catch (error) {
       console.error("Submission error:", error)
@@ -201,52 +198,75 @@ export default function SubmitVitalsPage() {
       </div>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-        {/* Patient Search */}
-        <Card className="relative z-20 border-border shadow-2xl shadow-slate-200/50 dark:shadow-slate-900/50 transition-all hover:shadow-3xl backdrop-blur-sm bg-white/80 dark:bg-slate-800/80 animate-in fade-in slide-in-from-bottom-8 duration-700">
+        {/* Patient Selection */}
+        <Card className="border-border shadow-md">
           <CardHeader className="pb-4">
-            <CardTitle className="flex items-center gap-2 text-xl text-foreground font-bold">
-              <Search className="h-6 w-6 text-teal-600" />
-              Patient Selection
-            </CardTitle>
-            <CardDescription className="text-base">Search and select a patient to enter vitals for</CardDescription>
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
+                <User className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <CardTitle className="text-lg text-foreground">Patient Selection</CardTitle>
+                <CardDescription>Choose a patient to record vital signs</CardDescription>
+              </div>
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="relative">
-              <Label htmlFor="patient-search" className="sr-only">
-                Search patient
-              </Label>
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground pointer-events-none" />
-                <Input
-                  id="patient-search"
-                  type="text"
-                  value={searchTerm}
-                  onChange={(e) => handleSearch(e.target.value)}
-                  placeholder="Start typing a patient name..."
-                  className="pl-10 pr-4 py-6 text-base border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
-                />
-              </div>
-              {filteredPatients.length > 0 && (
-                <div className="absolute left-0 right-0 top-full z-50 mt-2 overflow-hidden rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-2xl animate-in fade-in slide-in-from-top-2">
-                  {filteredPatients.map((p) => (
-                    <button
-                      key={p.id}
-                      type="button"
-                      onClick={() => selectPatient(p)}
-                      className="flex w-full items-center gap-3 px-5 py-3.5 text-left text-base font-medium text-foreground transition-colors hover:bg-teal-50 dark:hover:bg-teal-900/20 border-b last:border-b-0 border-slate-100 dark:border-slate-700"
-                    >
-                      <CheckCircle2 className="h-5 w-5 text-teal-600" />
-                      {p.name}
-                    </button>
-                  ))}
-                </div>
-              )}
+            <div className="flex flex-col gap-3">
+              <Label htmlFor="patient-combobox">Patient Name *</Label>
+              <Popover open={open} onOpenChange={setOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    id="patient-combobox"
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={open}
+                    className="w-full justify-between h-11 text-left font-normal"
+                  >
+                    {selectedPatient ? (
+                      <span className="flex items-center gap-2">
+                        <User className="h-4 w-4 text-primary" />
+                        {selectedPatient.name}
+                      </span>
+                    ) : (
+                      <span className="text-muted-foreground">Select a patient...</span>
+                    )}
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[400px] p-0" align="start">
+                  <Command>
+                    <CommandInput placeholder="Search patient name..." />
+                    <CommandList>
+                      <CommandEmpty>No patient found.</CommandEmpty>
+                      <CommandGroup>
+                        {allPatients.map((patient) => (
+                          <CommandItem
+                            key={patient.id}
+                            value={patient.name}
+                            onSelect={() => {
+                              setSelectedPatient(patient)
+                              setOpen(false)
+                            }}
+                          >
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4",
+                                selectedPatient?.id === patient.id ? "opacity-100" : "opacity-0"
+                              )}
+                            />
+                            {patient.name}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
               {selectedPatient && (
-                <div className="mt-4 flex items-center gap-3 rounded-xl bg-accent/10 border-2 border-accent/30 px-5 py-4 shadow-md">
-                  <CheckCircle2 className="h-6 w-6 text-teal-600 flex-shrink-0" />
-                  <p className="text-base font-bold text-teal-700 dark:text-teal-300">
-                    Selected: {selectedPatient.name}
-                  </p>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <CheckCircle2 className="h-4 w-4 text-accent" />
+                  <span>Selected: <strong className="text-foreground">{selectedPatient.name}</strong></span>
                 </div>
               )}
             </div>
@@ -254,21 +274,25 @@ export default function SubmitVitalsPage() {
         </Card>
 
         {/* Vitals Measurements */}
-        <Card className="border-border shadow-2xl shadow-slate-200/50 dark:shadow-slate-900/50 transition-all hover:shadow-3xl backdrop-blur-sm bg-white/80 dark:bg-slate-800/80 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-100">
+        <Card className="border-border shadow-md">
           <CardHeader className="pb-4">
-            <CardTitle className="flex items-center gap-2 text-xl text-foreground font-bold">
-              <Activity className="h-6 w-6 text-teal-600" />
-              Vitals Measurements
-            </CardTitle>
-            <CardDescription className="text-base">Enter all measured vital signs with units</CardDescription>
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
+                <Activity className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <CardTitle className="text-lg text-foreground">Vitals Measurements</CardTitle>
+                <CardDescription>Enter all measured vital signs with units</CardDescription>
+              </div>
+            </div>
           </CardHeader>
           <CardContent>
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {physicalFields.map((field) => (
                 <div key={field.key} className="flex flex-col gap-2">
-                  <Label htmlFor={field.key} className="text-sm font-semibold text-foreground">
+                  <Label htmlFor={field.key} className="text-sm font-medium text-foreground">
                     {field.label}
-                    {field.unit && <span className="ml-1.5 text-muted-foreground font-medium">({field.unit})</span>}
+                    {field.unit && <span className="ml-1.5 text-muted-foreground">({field.unit})</span>}
                   </Label>
                   <Input
                     id={field.key}
@@ -278,17 +302,16 @@ export default function SubmitVitalsPage() {
                     placeholder={field.placeholder}
                     value={formValues[field.key]}
                     onChange={updateField(field.key)}
-                    className="transition-all py-3 text-base border-2 border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                   />
                 </div>
               ))}
               <div className="flex flex-col gap-2">
-                <Label htmlFor="shoes" className="text-sm font-semibold text-foreground">
+                <Label htmlFor="shoes" className="text-sm font-medium text-foreground">
                   Wearing Shoes
                 </Label>
                 <Select value={formValues.shoes} onValueChange={updateSelect("shoes")}
                 >
-                  <SelectTrigger id="shoes" className="h-12 border-2 border-slate-200 dark:border-slate-700 rounded-lg">
+                  <SelectTrigger id="shoes">
                     <SelectValue placeholder="Select..." />
                   </SelectTrigger>
                   <SelectContent>
@@ -299,9 +322,9 @@ export default function SubmitVitalsPage() {
               </div>
               {vitalFields.map((field) => (
                 <div key={field.key} className="flex flex-col gap-2">
-                  <Label htmlFor={field.key} className="text-sm font-semibold text-foreground">
+                  <Label htmlFor={field.key} className="text-sm font-medium text-foreground">
                     {field.label}
-                    {field.unit && <span className="ml-1.5 text-muted-foreground font-medium">({field.unit})</span>}
+                    {field.unit && <span className="ml-1.5 text-muted-foreground">({field.unit})</span>}
                   </Label>
                   <Input
                     id={field.key}
@@ -317,7 +340,7 @@ export default function SubmitVitalsPage() {
               ))}
             </div>
             <div className="mt-5 flex flex-col gap-2">
-              <Label htmlFor="blood_pressure" className="text-sm font-semibold text-foreground">
+              <Label htmlFor="blood_pressure" className="text-sm font-medium text-foreground">
                 Blood Pressure (mmHg)
               </Label>
               <Input
@@ -327,8 +350,8 @@ export default function SubmitVitalsPage() {
                 placeholder="120/80"
                 value={formValues.blood_pressure}
                 onChange={updateField("blood_pressure")}
-                className="transition-all py-3 text-base border-2 border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
               />
+              <p className="text-xs text-muted-foreground">Format: Systolic/Diastolic (e.g., 120/80)</p>
             </div>
           </CardContent>
         </Card>
@@ -336,42 +359,42 @@ export default function SubmitVitalsPage() {
         <Button
           type="submit"
           size="lg"
-          className="w-full py-6 text-lg font-bold bg-primary hover:bg-primary/90 shadow-md transition-all duration-200 hover:shadow-lg hover:-translate-y-1 rounded-xl sm:w-auto sm:self-end"
+          className="w-full sm:w-auto sm:self-end bg-primary hover:bg-primary/90"
         >
-          <Activity className="mr-2 h-6 w-6" />
+          <Activity className="mr-2 h-5 w-5" />
           Submit & Analyze Vitals
         </Button>
       </form>
 
       {/* Success Modal */}
       <Dialog open={showModal} onOpenChange={setShowModal}>
-        <DialogContent className="sm:max-w-md backdrop-blur-sm bg-white/95 dark:bg-slate-800/95 border-2">
+        <DialogContent className="sm:max-w-md">
           <DialogHeader className="items-center text-center">
-            <div className="mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-accent shadow-md">
-              <CheckCircle2 className="h-9 w-9 text-white animate-pulse" />
+            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-accent/20">
+              <CheckCircle2 className="h-10 w-10 text-accent" />
             </div>
-            <DialogTitle className="text-2xl font-bold">Submission Complete</DialogTitle>
+            <DialogTitle className="text-2xl text-foreground">Submission Complete</DialogTitle>
             <DialogDescription className="text-base">
               The vitals have been recorded successfully and analyzed by the system.
             </DialogDescription>
           </DialogHeader>
           {prediction && (
-            <div className={`flex items-start gap-4 rounded-xl p-5 border-2 ${
+            <div className={`flex items-start gap-4 rounded-lg p-4 border ${
               prediction.pred_flag === 1 
                 ? 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800' 
-                : 'bg-teal-50 dark:bg-teal-900/20 border-teal-200 dark:border-teal-800'
+                : 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800'
             }`}>
-              <AlertTriangle className={`h-6 w-6 shrink-0 mt-0.5 ${
-                prediction.pred_flag === 1 ? 'text-red-600 dark:text-red-400' : 'text-teal-600 dark:text-teal-400'
+              <AlertTriangle className={`h-5 w-5 shrink-0 mt-0.5 ${
+                prediction.pred_flag === 1 ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400'
               }`} />
               <div>
-                <p className="text-base font-bold text-foreground">
+                <p className="font-semibold text-foreground">
                   Risk Assessment: {prediction.pred_flag === 1 ? "High Risk" : "Low Risk"}
                 </p>
-                <p className="mt-2 text-sm text-muted-foreground font-medium">
+                <p className="mt-1 text-sm text-muted-foreground">
                   System Confidence: {(prediction.p_flag * 100).toFixed(2)}%
                 </p>
-                <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
+                <p className="mt-2 text-sm text-muted-foreground">
                   {prediction.pred_flag === 1 
                     ? "The vitals indicate elevated risk. Consider immediate clinical review." 
                     : "The vitals appear within normal ranges based on analysis."}
@@ -382,7 +405,8 @@ export default function SubmitVitalsPage() {
           <DialogFooter>
             <Button 
               onClick={() => setShowModal(false)} 
-              className="w-full py-3 text-base font-semibold bg-primary hover:bg-primary/90 shadow-md"
+              className="w-full bg-primary hover:bg-primary/90"
+              size="lg"
             >
               Close
             </Button>
