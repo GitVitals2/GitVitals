@@ -183,10 +183,17 @@ export default async function InstructorReviewsPage() {
                       </td>
                       <td className="px-6 py-4">
                         {r.gradedAt ? (
-                          <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-lg border border-green-200 dark:border-green-800">
-                            <span className="text-lg">✓</span>
-                            <span className="text-xs font-semibold">{r.isCorrect ? 'Correct' : 'Incorrect'}</span>
-                          </div>
+                          r.isCorrect ? (
+                            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-lg border border-green-200 dark:border-green-800">
+                              <span className="text-lg">✓</span>
+                              <span className="text-xs font-semibold">Correct</span>
+                            </div>
+                          ) : (
+                            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded-lg border border-red-200 dark:border-red-800">
+                              <span className="text-lg">✕</span>
+                              <span className="text-xs font-semibold">Incorrect</span>
+                            </div>
+                          )
                         ) : (
                           <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 rounded-lg border border-amber-200 dark:border-amber-800">
                             <span className="text-lg">⏳</span>

@@ -8,6 +8,8 @@ type Submission = {
   id: string;
   submittedAt: string;
   isCorrect: boolean;
+  gradedAt: string | null;
+  instructorFeedback: string | null;
   heartRate: number;
   bloodPressureSys: number;
   bloodPressureDia: number;
@@ -136,11 +138,18 @@ export default function StudentSubmissionsPage() {
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
-                          {submission.isCorrect ? (
-                            <>
-                              <CheckCircle2 className="h-5 w-5 text-green-600" />
-                              <span className="text-green-700 dark:text-green-400 font-semibold">Correct</span>
-                            </>
+                          {submission.gradedAt ? (
+                            submission.isCorrect ? (
+                              <>
+                                <CheckCircle2 className="h-5 w-5 text-green-600" />
+                                <span className="text-green-700 dark:text-green-400 font-semibold">Correct</span>
+                              </>
+                            ) : (
+                              <>
+                                <XCircle className="h-5 w-5 text-red-600" />
+                                <span className="text-red-700 dark:text-red-400 font-semibold">Incorrect</span>
+                              </>
+                            )
                           ) : (
                             <>
                               <AlertCircle className="h-5 w-5 text-amber-600" />
@@ -148,6 +157,11 @@ export default function StudentSubmissionsPage() {
                             </>
                           )}
                         </div>
+                        {submission.instructorFeedback && (
+                          <div className="mt-1 text-sm text-muted-foreground italic">
+                            "{submission.instructorFeedback}"
+                          </div>
+                        )}
                       </td>
                       <td className="px-6 py-4">
                         {submission.mlConfidence ? (
