@@ -35,8 +35,26 @@ export async function POST(request: Request) {
       where: {
         studentId: user.students.id
       },
-      include: {
-        patient: true
+      select: {
+        id: true,
+        submittedAt: true,
+        isCorrect: true,
+        gradedAt: true,
+        instructorFeedback: true,
+        heartRate: true,
+        bloodPressureSys: true,
+        bloodPressureDia: true,
+        respiratoryRate: true,
+        temperature: true,
+        oxygenSaturation: true,
+        mlPrediction: true,
+        mlRiskScore: true,
+        mlConfidence: true,
+        patient: {
+          select: {
+            name: true
+          }
+        }
       },
       orderBy: {
         submittedAt: 'desc'

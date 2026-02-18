@@ -54,6 +54,9 @@ export default function StudentSubmissionsPage() {
 
         if (data.submissions) {
           console.log('Submissions count:', data.submissions.length);
+          console.log('First submission:', data.submissions[0]);
+          console.log('gradedAt:', data.submissions[0]?.gradedAt);
+          console.log('isCorrect:', data.submissions[0]?.isCorrect);
           setSubmissions(data.submissions);
         }
       } catch (error) {
