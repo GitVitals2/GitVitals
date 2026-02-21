@@ -1,35 +1,30 @@
-# Dockerfile - Local Development
-# Single-stage development image with hot reload
-
+# Dockerfile - Production
 FROM node:20-slim
 
-# Install OpenSSL for Prisma
 RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 
-# Set working directory
 WORKDIR /app
 
-# Copy package files
 COPY package*.json ./
-
-# Install dependencies
 RUN npm install
 
-# Copy prisma files
 COPY prisma ./prisma/
 COPY prisma.config.ts ./
 
-# Provide a default DATABASE_URL for prisma generate during build
-ENV DATABASE_URL="postgresql://username:password@localhost:5432/gitvitals"
+# DATABASE_URL is injected by Railway at runtime.
+# We pass a dummy value here only so `prisma generate` (which just reads the schema) can run at build time.
+ARG DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
+ENV DATABASE_URL=$DATABASE_URL
 
-# Generate Prisma client
 RUN npx prisma generate
 
-# Copy the rest of the application
 COPY . .
 
-# Expose port
+RUN npm run build
+
 EXPOSE 3000
 
-# Start the development server
-CMD ["npm", "run", "dev"]
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+
+CMD ["npm", "start"]
